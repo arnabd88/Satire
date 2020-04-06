@@ -5,7 +5,8 @@
 #inptbl = {}
 #outtbl = {}
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
+from ASTtypes import *
 
 inputVars = {}
 outVars = []
@@ -20,7 +21,8 @@ lhstbl = {}
 # f_expression -> obj
 csetbl = {}
 
-symTable = {}
+constTable = {}
+symTable = defaultdict(object)
 depthTable = {}
 
 hashBank = OrderedDict()

@@ -79,7 +79,7 @@ class FreeVar(AST):
 		name = str(obj.token.value)
 		obj.depth = 0
 		obj.set_rounding(round_mode)
-		intv = globals.inputVars.get(name, None)
+		intv = globals.inputVars.get(obj.token.value, None)
 		if intv is not None and (intv[0]==intv[1]):
 			return intv[0]
 		else:
@@ -104,9 +104,9 @@ class Var(AST):
 		
 	@staticmethod
 	def eval(obj, round_mode="fl64"):
-		name = str(obj.token.value)
+		#name = str(obj.token.value)
 		obj.set_rounding(round_mode)
-		node_lhs = globals.symTable.get(name, None)
+		node_lhs = globals.symTable.get(obj.token.value, None)
 		if node_lhs is None:
 			return obj.token.value
 		else:
