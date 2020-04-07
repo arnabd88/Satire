@@ -1,5 +1,5 @@
 
-import globals
+import Globals
 
 import symengine as seng
 import ops_def as ops
@@ -21,7 +21,7 @@ class AST(object):
 		self.noise = (0,0)
 		self.rnd = 1.0
 
-	@staticmethod
+	#@staticmethod
 	def set_expression(self, fexpr):
 		self.f_expression = fexpr
 
@@ -43,7 +43,7 @@ class AST(object):
 
 	@staticmethod
 	def get_noise(obj):
-		return (seng.expand(obj.f_expression)) if self.f_expression is not None else 0
+		return (seng.expand(obj.f_expression)) if obj.f_expression is not None else 0
 
 	def set_rounding(self, rnd_type):
 		self.rnd = ops._FP_RND[rnd_type]
@@ -79,8 +79,8 @@ class FreeVar(AST):
 		name = str(obj.token.value)
 		obj.depth = 0
 		obj.set_rounding(round_mode)
-		intv = globals.inputVars.get(obj.token.value, None)
-		if intv is not None and (intv[0]==intv[1]):
+		intv = Globals.inputVars.get(obj.token.value, None)
+		if intv is not None and (intv["INTV"][0]==intv["INTV"][1]):
 			return intv[0]
 		else:
 			return seng.var(name)
@@ -106,7 +106,7 @@ class Var(AST):
 	def eval(obj, round_mode="fl64"):
 		#name = str(obj.token.value)
 		obj.set_rounding(round_mode)
-		node_lhs = globals.symTable.get(obj.token.value, None)
+		node_lhs = Globals.symTable.get(obj.token.value, None)
 		if node_lhs is None:
 			return obj.token.value
 		else:

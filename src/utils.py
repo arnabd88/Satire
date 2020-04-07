@@ -6,7 +6,7 @@ import re
 import math as mt
 import time
 #import numpy as np
-import globals
+import Globals
 #import sympy as sym
 import random
 import struct
@@ -260,7 +260,7 @@ def invoke_gelpia_bak(symExpr, inputStr):
 #
 #
 #	print("exec_list:", exec_list)
-#	globals.gelpiaID += 1
+#	Globals.gelpiaID += 1
 #	start_time = time.time()
 #	p = sb.Popen(exec_list, stdout=sb.PIPE, stderr=sb.PIPE)
 #	s = p.communicate(timeout=timeout)
@@ -294,9 +294,9 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	str_expr = re.sub(r'im\b', "0.0*", str_expr)
 	#print("Pass conversion gelpia")
 	str_expr = inputStr + str_expr
-	globals.gelpiaID += 1
-	#print("Begining New gelpia query->ID:", globals.gelpiaID)
-	#fout = open("gelpia_"+str(globals.gelpiaID)+".txt", "w")
+	Globals.gelpiaID += 1
+	#print("Begining New gelpia query->ID:", Globals.gelpiaID)
+	#fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
 	#fout.write(str_expr)
 	#fout.close()
 
@@ -305,7 +305,7 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	
 	max_lower = Value("d", float("nan"))
 	max_upper = Value("d", float("nan"))
-	#print("ID:",globals.gelpiaID, "\t Finding max, min\n")
+	#print("ID:",Globals.gelpiaID, "\t Finding max, min\n")
 	p = Process(target=gelpia.find_max, args=(str_expr,
 	                                          gelpia_epsilons,
 	                                          gelpia_timeout,
@@ -331,7 +331,7 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	                                       gelpia_rust_executable)
 	p.join()
 	end_time = time.time()
-	#print("Finishing gelpia query->ID:", globals.gelpiaID)
+	#print("Finishing gelpia query->ID:", Globals.gelpiaID)
 	
 	#print(str_expr)
 	#print(label, end_time - start_time, "  , FSYM: ", len(symExpr.free_symbols))
@@ -354,9 +354,9 @@ def invoke_gelpia_herror(symExpr, inputStr, label="Func-> Dur:"):
 	str_expr = re.sub(r'im\b', "0.0*", str_expr)
 	#print("Pass conversion gelpia")
 	str_expr = inputStr + str_expr
-	globals.gelpiaID += 1
-	#print("Begining New gelpia query->ID:", globals.gelpiaID)
-	#fout = open("gelpia_"+str(globals.gelpiaID)+".txt", "w")
+	Globals.gelpiaID += 1
+	#print("Begining New gelpia query->ID:", Globals.gelpiaID)
+	#fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
 	#fout.write(str_expr)
 	#fout.close()
 
@@ -365,7 +365,7 @@ def invoke_gelpia_herror(symExpr, inputStr, label="Func-> Dur:"):
 	
 	max_lower = Value("d", float("nan"))
 	max_upper = Value("d", float("nan"))
-	#print("ID:",globals.gelpiaID, "\t Finding max, min\n")
+	#print("ID:",Globals.gelpiaID, "\t Finding max, min\n")
 	p = Process(target=gelpia.find_max, args=(str_expr,
 	                                          gelpia_epsilons,
 	                                          10,
@@ -391,7 +391,7 @@ def invoke_gelpia_herror(symExpr, inputStr, label="Func-> Dur:"):
 	                                       gelpia_rust_executable)
 	p.join()
 	end_time = time.time()
-	#print("Finishing gelpia query->ID:", globals.gelpiaID)
+	#print("Finishing gelpia query->ID:", Globals.gelpiaID)
 	
 	#print(str_expr)
 	#print(label, end_time - start_time, "  , FSYM: ", len(symExpr.free_symbols))
@@ -402,7 +402,7 @@ def invoke_gelpia_herror(symExpr, inputStr, label="Func-> Dur:"):
 def extract_input_dep(free_syms):
 	ret_list = list()
 	for fsyms in free_syms:
-		ret_list += [str(fsyms), " = ", str(globals.inputVars[str(fsyms)]["INTV"]), ";"]
+		ret_list += [str(fsyms), " = ", str(Globals.inputVars[fsyms]["INTV"]), ";"]
 	return "".join(ret_list)
     #for name,val in inputs.items():
     #    ret_list += [name, " = ", str(val["INTV"]), ";"]
@@ -413,14 +413,14 @@ def genSig(sym_expr):
 		return float(str(sym_expr))
 	else:
 		d = OrderedDict()
-		freeSyms = [str(i) for i in sym_expr.free_symbols]
+		freeSyms = [i for i in sym_expr.free_symbols]
 		freeSyms.sort()
 		# make this to a map
 		#for i in range(0, len(freeSyms)):
 		#	inp = freeSyms[i]
-		#	d[inp] = str(i)+"_"+"{intv}".format(intv=globals.inputVars[inp]["INTV"])
+		#	d[inp] = str(i)+"_"+"{intv}".format(intv=Globals.inputVars[inp]["INTV"])
 
-		fpt = map(lambda i : (freeSyms[i], str(i)+"_"+"{intv}".format(intv=globals.inputVars[freeSyms[i]]["INTV"])), \
+		fpt = map(lambda i : (str(freeSyms[i]), str(i)+"_"+"{intv}".format(intv=Globals.inputVars[freeSyms[i]]["INTV"])), \
 		                      range(len(freeSyms)))
 		d =	{p[0]:p[1] for p in fpt}
 
@@ -443,36 +443,36 @@ def generate_signature(sym_expr):
 	#freeSyms.sort()
 	#for i in range(0,len(freeSyms)):
 	#	inp = freeSyms[i]
-	#	#print(inp, type(inp), globals.inptbl[inp])
-	#	d[inp] = str(i)+"_"+"{intv}".format(intv=globals.inputVars[inp]["INTV"])
+	#	#print(inp, type(inp), Globals.inptbl[inp])
+	#	d[inp] = str(i)+"_"+"{intv}".format(intv=Globals.inputVars[inp]["INTV"])
 
 	#regex = re.compile("(%s)" % "|".join(map(re.escape, d.keys())))
 
 	#strSig = regex.sub(lambda mo: d[mo.string[mo.start():mo.end()]], str(sym_expr))
 	#sig = hashSig(strSig, "md5")
 	#print("STRSIG->", strSig, sig)
-	#globals.hashBank[sig] = globals.hashBank.get(sig, utils.invoke_gelpia(sym_expr, self._inputStr))
+	#Globals.hashBank[sig] = Globals.hashBank.get(sig, utils.invoke_gelpia(sym_expr, self._inputStr))
 	#s1 = time.time()
-	hbs = len(globals.hashBank.keys())
+	hbs = len(Globals.hashBank.keys())
 	#s2 = time.time()
 	#print("\nTime for hashing sig = ", s2 - s1)
 	print("************ HBS : ", hbs, " ******************")
 	if(hbs > 100):
-		list(map(lambda x : globals.hashBank.popitem(x) , list(globals.hashBank.keys())[0:int(hbs/2)]))
+		list(map(lambda x : Globals.hashBank.popitem(x) , list(Globals.hashBank.keys())[0:int(hbs/2)]))
 	sig = genSig(sym_expr)
-	check = globals.hashBank.get(sig, None)
+	check = Globals.hashBank.get(sig, None)
 	if check is None:
-		inputStr = extract_input_dep(list(map(str, sym_expr.free_symbols)))
+		inputStr = extract_input_dep(list(sym_expr.free_symbols))
 		#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
 		g1 = time.time()
-		globals.hashBank[sig] = invoke_gelpia(sym_expr, inputStr)
+		Globals.hashBank[sig] = invoke_gelpia(sym_expr, inputStr)
 		g2 = time.time()
 		print("Gelpia solve = ", g2 - g1, "\n\n")
 	else:
 		print("MATCH FOUND")
-		#globals.hashBank[sig] = check
+		#Globals.hashBank[sig] = check
 
-	return globals.hashBank[sig]
+	return Globals.hashBank[sig]
 
 
 def wrap_generate_signature( sym_expr, collect_list, index):
@@ -580,19 +580,23 @@ def extract_partialAST(NodeList):
 ########## Extra code for the selective tuner ####################
 ### some is redundant, remove later #############
 
-def extract_input_dep(free_syms, inputVars=globals.inputVars):
+def extract_input_dep(free_syms, inputVars=Globals.inputVars):
 	ret_list = list()
 	for fsyms in free_syms:
-		ret_list += [str(fsyms), " = ", str(inputVars[str(fsyms)]["INTV"]), ";"]
+		#print(fsyms)
+		#print(inputVars.keys())
+		#print(inputVars[fsyms])
+		ret_list += [str(fsyms), " = ", str(inputVars[fsyms]["INTV"]), ";"]
 	return "".join(ret_list)
 
-def generate_signature_tuner(sym_expr, inputVars=globals.inputVars):
+def generate_signature_tuner(sym_expr, inputVars=Globals.inputVars):
 
 	try:
 	    const_intv = float(str(sym_expr))
 	    return [const_intv, const_intv]
 	except ValueError:
 	    pass
-	inputStr = extract_input_dep(list(map(str, sym_expr.free_symbols)), inputVars)
+	#inputStr = extract_input_dep(list(map(str, sym_expr.free_symbols)), inputVars)
+	inputStr = extract_input_dep(sym_expr.free_symbols, inputVars)
 	#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
 	return invoke_gelpia(sym_expr, inputStr)

@@ -8,7 +8,7 @@ import ops_def as ops
 import copy
 import sys
 
-import globals
+import Globals
 import time
 
 
@@ -39,8 +39,8 @@ class Sparser(object):
 
 	def addDepthInfo(self, node):
 		#pass
-		globals.depthTable[node.depth] = globals.depthTable.get(node.depth, set())
-		globals.depthTable[node.depth].add(node)
+		#Globals.depthTable[node.depth] = Globals.depthTable.get(node.depth, set())
+		Globals.depthTable[node.depth].add(node)
 	
 	def expr(self):
 		"""
@@ -54,7 +54,7 @@ class Sparser(object):
 			#node = self.CommonLut(BinOp(left=node, token=token, right=self.term()), token)
 			node = BinOp(left=node, token=token, right=self.term())
 			self.addDepthInfo(node)
-			#print( node.depth, type(node).__name__, len(set(globals.depthTable[node.depth])) , len(globals.depthTable[node.depth]))
+			#print( node.depth, type(node).__name__, len(set(Globals.depthTable[node.depth])) , len(Globals.depthTable[node.depth]))
 
 		return node
 
@@ -69,37 +69,37 @@ class Sparser(object):
 			#node = self.CommonLut(BinOp(left=node, token=token, right=self.factor()), token)
 			node = BinOp(left=node, token=token, right=self.factor())
 			self.addDepthInfo(node)
-			#print( node.depth, type(node).__name__, len(set(globals.depthTable[node.depth])) , len(globals.depthTable[node.depth]))
+			#print( node.depth, type(node).__name__, len(set(Globals.depthTable[node.depth])) , len(Globals.depthTable[node.depth]))
 
 		return node
 
 
 	def CheckSymTable(self, node, token):
 		
-		if globals.symTable.__contains__(token.value):
-			return globals.symTable.__getitem__(token.value)
+		if Globals.symTable.__contains__(token.value):
+			return Globals.symTable.__getitem__(token.value)
 		else:
-			globals.symTable.__setitem__(token.value, node)
+			Globals.symTable.__setitem__(token.value, node)
 			self.addDepthInfo(node)
 			return node
 
 	# Do the commonLut for Num/Constants and var to lookup the symbol table
 	def CheckSymTable1(self, node, token):
 		t1 = time.time()
-		node_exists = globals.symTable.get(token.value)
+		node_exists = Globals.symTable.get(token.value)
 		t2 = time.time()
 		#print("lookup time = ", t2-t1, token.value, node.depth, node_exists.depth if node_exists is not None else 0)
-		#globals.symTable[str(token.value)] = node
+		#Globals.symTable[str(token.value)] = node
 		#return node
 		if node_exists is None:
-			globals.symTable.__setitem__(token.value, node)
+			Globals.symTable.__setitem__(token.value, node)
 			self.addDepthInfo(node)
-			#print( node.depth, type(node).__name__, len(set(globals.depthTable[node.depth])) ,\
-			#len(globals.depthTable[node.depth]), node.rec_eval(node), token.value)
+			#print( node.depth, type(node).__name__, len(set(Globals.depthTable[node.depth])) ,\
+			#len(Globals.depthTable[node.depth]), node.rec_eval(node), token.value)
 			return node
 		else:
-			globals.symTable.__setitem__(token.value, node_exists)
-			#globals.symTable[str(token.value)] = node_exists
+			Globals.symTable.__setitem__(token.value, node_exists)
+			#Globals.symTable[str(token.value)] = node_exists
 			## extra check for binops
 			#if( type(node).__name__ == 'BinOp'):
 			#	if node_exists.parents.__contains__(node):
@@ -125,24 +125,24 @@ class Sparser(object):
 			self.consume(token.type)
 			#node = self.CommonLut(Num(token), token)
 			#node = self.CheckSymTable(Num(token), token)
-			#if not globals.constTable.__contains__(token.value):
-			#	globals.constTable[token.value] = Num(token)
-			# globals.constTable[token.value] = globals.constTable.get(token.value, Num(token))
-			# return globals.constTable[token.value]
+			#if not Globals.constTable.__contains__(token.value):
+			#	Globals.constTable[token.value] = Num(token)
+			# Globals.constTable[token.value] = Globals.constTable.get(token.value, Num(token))
+			# return Globals.constTable[token.value]
 			return Num(token)
 		elif token.type in (SQRT,SIN,COS,LOG,TAN,COT,SINH,COSH,EXP):
 			self.consume(token.type)
 			#node = self.CommonLut(TransOp(self.factor(), token), token)
 			node = TransOp(self.factor(), token)
 			self.addDepthInfo(node)
-			#print( node.depth, type(node).__name__, len(set(globals.depthTable[node.depth])) , len(globals.depthTable[node.depth]))
+			#print( node.depth, type(node).__name__, len(set(Globals.depthTable[node.depth])) , len(Globals.depthTable[node.depth]))
 			return node
 		elif token.type == LPAREN:
 			self.consume(LPAREN)
 			node = self.expr()
 			self.consume(RPAREN)
 			self.addDepthInfo(node)
-			#print( node.depth, type(node).__name__, len(set(globals.depthTable[node.depth])) , len(globals.depthTable[node.depth]))
+			#print( node.depth, type(node).__name__, len(set(Globals.depthTable[node.depth])) , len(Globals.depthTable[node.depth]))
 			return node
 		else:
 			node = Var(token)
@@ -185,18 +185,18 @@ class Sparser(object):
 			self.consume(ASSIGN)
 			node = self.expr()
 			node.set_rounding(rnd)
-			node_exists = globals.symTable.get(nameToken.value, None)
+			node_exists = Globals.symTable.get(nameToken.value, None)
 			if node_exists is not None:
 				self.error()
-			globals.symTable[nameToken.value] = node
+			Globals.symTable[nameToken.value] = node
 
-			#node_exists = globals.csetbl.get(node.f_expression, None)
+			#node_exists = Globals.csetbl.get(node.f_expression, None)
 			#if node_exists is None:
 			#	self.error()
 			#else:
 			#	node_exists.set_rounding(rnd)
 			#	#print(name, " : ", node_exists.depth, " : ", seng.count_ops(node_exists.f_expression))
-			#	globals.lhstbl[name] = node_exists			## update roots from here
+			#	Globals.lhstbl[name] = node_exists			## update roots from here
 
 
 	def parse_output(self):
@@ -218,8 +218,9 @@ class Sparser(object):
 	def output(self):
 		while self.current_token.type == ID:
 			name = str(self.current_token.value)
+			nameSym = self.current_token.value
 			self.consume(ID)
-			globals.outVars.append(name)
+			Globals.outVars.append(nameSym)
 
 	def parse_input(self):
 		""" input { interval_list } """
@@ -263,24 +264,24 @@ class Sparser(object):
 			symVar = FreeVar(var_token)
 			symVar.set_rounding(fptype)
 			#symVar.set_expression(symVar, symVar.eval(symVar))
-			#globals.csetbl[symVar.f_expression] = globals.csetbl.get(symVar.f_expression, symVar)
+			#Globals.csetbl[symVar.f_expression] = Globals.csetbl.get(symVar.f_expression, symVar)
 			#if(left==right):
 			#	print("Compressing")
 			#	symVar.f_expression = left
-			globals.symTable[var_token.value] = symVar
-			globals.inputVars[var_token.value] = {"INTV" : [left, right]}
+			Globals.symTable[var_token.value] = symVar
+			Globals.inputVars[var_token.value] = {"INTV" : [left, right]}
 
 
 	def parse(self, text):
 		self.lexer.create_token_generator(text)
 		self.current_token = self.lexer.get_next_token()#current_token()
 		self.program()
-		print("Num LHS exprs ->", len(globals.symTable.keys()))
-		print("Const expr ->", len(globals.constTable.keys()))
-		#for k,v in globals.symTable.items():
+		print("Num LHS exprs ->", len(Globals.symTable.keys()))
+		print("Const expr ->", len(Globals.constTable.keys()))
+		#for k,v in Globals.symTable.items():
 		#	print(k)
-		print("MaxDepth ->", max(list(globals.depthTable.keys())+[0]))
-		#print("Num Unique nodes ->", len(globals.csetbl.keys()))
+		print("MaxDepth ->", max(list(Globals.depthTable.keys())+[0]))
+		#print("Num Unique nodes ->", len(Globals.csetbl.keys()))
 
 
 if __name__ == "__main__":
@@ -292,7 +293,7 @@ if __name__ == "__main__":
 	parser.parse(text)
 	end_parse_time = time.time()
 	num_unique_nodes = 0
-	for k,v in globals.depthTable.items():
+	for k,v in Globals.depthTable.items():
 		print("Depth:", k, "\t: Num-Nodes: ", len(v))
 		num_unique_nodes += len(v) if k!=0 else 0
 	print("Num Unique Nodes = ", num_unique_nodes)
