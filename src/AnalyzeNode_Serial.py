@@ -59,6 +59,7 @@ class AnalyzeNode_Serial(object):
 	
 	def converge_parents(self, node):
 		#print(id(node), node.depth, self.parentTracker[node], len(node.parents) , len(self.parent_dict[node]), node.rec_eval(node))
+		#print(id(node), node.depth, self.parentTracker[node], len(set(node.parents)) , len(self.parent_dict[node]), node.rec_eval(node))
 		#print(node.f_expression, "\n")
 		#print([id(par) for par in node.parents if par not in self.parent_dict[node]], "\n\n")
 		return True if self.parentTracker[node] == len(self.parent_dict[node]) else False

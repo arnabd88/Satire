@@ -12,26 +12,62 @@ def getProbeList():
 	return [Globals.symTable[outVar] for outVar in Globals.outVars]
 
 
-def dfs_expression_builder(node, reachable, parent_dict):
+def merge( n, node, parent_dict):
+	new_parents = n.parents+node.parents
+	for par in n.parents:
+		par.children = tuple(list(map(lambda x: x if x!=n else node, par.children)))
+
+	node.parents = new_parents
+	##Modify other references 'n' can hold
+	#print(n.f_expression)
+	if Globals.depthTable[n.depth].__contains__(n):
+		Globals.depthTable[n.depth].remove(n)
+	Globals.symTable = {k:v for k,v in Globals.symTable.items() if v!=n}
+
+	## re-check
+	parent_dict[node] += parent_dict[n]
+	for child in node.children:
+		if parent_dict[child].__contains__(n):
+			parent_dict[child].remove(n)
+	del parent_dict[n]
+
+
+	return node
+		
+
+def dfs_expression_builder(node, reachable, parent_dict, csetbl):
 
 	for child in node.children:
 		if not reachable[child.depth].__contains__(child):
-			dfs_expression_builder(child, reachable, parent_dict)
+			dfs_expression_builder(child, reachable, parent_dict, csetbl)
 		parent_dict[child].append(node)
 
 	node.set_expression(node.eval(node))
-	#print(node.f_expression)
 	reachable[node.depth].add(node)
+	matchingElemets = [n for n in csetbl[node.f_expression] if n.children == node.children and n!=node]
+	if len(matchingElemets) <= 0 :
+		csetbl[node.f_expression].add(node)
+	else:
+		new_node = node
+		for n in matchingElemets:
+			node = merge(n, node, parent_dict)
+			del n
+
+	#Globals.symTable = {k:v for k,v in Globals.symTable.items() if not removeNodes.__contains__(v)}
+	#for child in node.children:
+	#	parent_dict[child] = [ par for par in child.parents if not removeNodes.__contains__(par)]
 
 
 def expression_builder(probeList):
 
 	parent_dict = defaultdict(list)
 	reachable = defaultdict(set)
+	## expr -> {child} -> node
+	csetbl = defaultdict(set)
 
 	for node in probeList:
 		if not reachable[node.depth].__contains__(node):
-			dfs_expression_builder(node, reachable, parent_dict)
+			dfs_expression_builder(node, reachable, parent_dict, csetbl)
 
 	del reachable
 
