@@ -2,6 +2,7 @@
 
 import sys
 import time
+import copy
 import globals
 from gtokens import *
 import symengine as seng
@@ -18,6 +19,11 @@ logger = logging.getLogger(__name__)
 
 class AnalyzeNode_Serial(object):
 
+	__slots__ = ['workList', 'next_workList', 'parentTracker', 'completed', \
+	             'Accumulator', 'results', 'bwdDeriv', 'probeList', 'trimList',\
+				 'argList', 'parent_dict', 'simplify']
+				 
+
 	def initialize(self):
 		self.workList = []
 		self.next_workList = []
@@ -25,34 +31,53 @@ class AnalyzeNode_Serial(object):
 		self.completed = defaultdict(set)
 		self.Accumulator = defaultdict(int)
 		self.results = {}
-		self.bwdDeriv = defaultdict(dict)
+		self.bwdDeriv = {}#defaultdict(dict)
 
 
 	def __init__(self, probeNodeList, argList):
 		self.initialize()
 		self.probeList = probeNodeList
+		self.trimList = probeNodeList
 		self.argList   = argList
-		self.parent_dict = helper.build_partial_ast(probeNodeList)
-		self.__init_workStack__()
-		self.__setup_outputs__()
+		## builds with side effects
+		self.parent_dict = helper.expression_builder(probeNodeList)
+		#self.parent_dict = helper.build_partial_ast(probeNodeList)
+		#self.__init_workStack__()
+		#self.__setup_outputs__()
 
 	def __setup_outputs__(self):
-		for node in self.probeList:
+		for node in self.trimList:
 			self.bwdDeriv[node] = {node : 1}
 			self.parentTracker[node] = len(self.parent_dict[node])
 
 	def __init_workStack__(self):
-		max_depth = max(list(map(lambda x: x.depth, self.probeList)))
+		max_depth = max(list(map(lambda x: x.depth, self.trimList)))
 		#print(max_depth)
-		it1, it2 = utils.partition(self.probeList, lambda x:x.depth==max_depth)
+		it1, it2 = utils.partition(self.trimList, lambda x:x.depth==max_depth)
 		self.next_workList = list(it1)
 		self.workList = list(it2)
 	
 	def converge_parents(self, node):
-		#print(id(node), node.depth, self.parentTracker[node], len(node.parents) , len(self.parent_dict[node]))
+		#print(id(node), node.depth, self.parentTracker[node], len(node.parents) , len(self.parent_dict[node]), node.rec_eval(node))
 		#print(node.f_expression, "\n")
+		#print([id(par) for par in node.parents if par not in self.parent_dict[node]], "\n\n")
 		return True if self.parentTracker[node] == len(self.parent_dict[node]) else False
 	
+	#def visit_node_deriv(self, node):
+	#	outList = self.bwdDeriv[node].keys()
+	#	opList = [child.f_expression for child in node.children]
+	#	if(len(node.children) > 0):
+	#		DerivFunc = ops._DFOPS[node.token.type]
+	#		for i, child_node in enumerate(node.children):
+	#			for outVar in outList:
+	#				self.bwdDeriv[child_node][outVar] = self.bwdDeriv[child_node].get(outVar, 0) +\
+	#				                       self.bwdDeriv[node][outVar] * \
+	#									   (0 if utils.isConst(child_node) else \
+	#									   DerivFunc[i](opList))
+	#				self.next_workList.append(child_node)
+	#			self.parentTracker[child_node] += 1
+	#	self.completed[node.depth].add(node)
+
 	def visit_node_deriv(self, node):
 		outList = self.bwdDeriv[node].keys()
 		opList = [child.f_expression for child in node.children]
@@ -60,14 +85,15 @@ class AnalyzeNode_Serial(object):
 			DerivFunc = ops._DFOPS[node.token.type]
 			for i, child_node in enumerate(node.children):
 				for outVar in outList:
+					self.bwdDeriv[child_node] = self.bwdDeriv.get(child_node, {})
 					self.bwdDeriv[child_node][outVar] = self.bwdDeriv[child_node].get(outVar, 0) +\
 					                       self.bwdDeriv[node][outVar] * \
 										   (0 if utils.isConst(child_node) else \
 										   DerivFunc[i](opList))
 					self.next_workList.append(child_node)
+				##------
 				self.parentTracker[child_node] += 1
 		self.completed[node.depth].add(node)
-
 
 	def traverse_ast(self):
 		next_workList = []
@@ -92,6 +118,7 @@ class AnalyzeNode_Serial(object):
 
 
 	def propagate_symbolic(self, node):
+		#print("@node depth = ", node.depth)
 		for outVar in self.bwdDeriv[node].keys():
 			expr_solve = (((\
 			                (self.bwdDeriv[node][outVar]))*\
@@ -104,7 +131,7 @@ class AnalyzeNode_Serial(object):
 				expr_solve = intv
 			elif seng.count_ops( expr_solve ) > 1000:
 				expr_solve = max(utils.generate_signature(expr_solve))
-			self.Accumulator[outVar] += expr_solve
+			self.Accumulator[outVar] += seng.expand(expr_solve)
 
 
 	def visit_node_ferror(self, node):
@@ -138,10 +165,36 @@ class AnalyzeNode_Serial(object):
 
 	def start(self):
 
-		print("Begin Derivatives\n", time.time())
+		local_hashbank = {}
+		mappedList = {}
+		self.trimList = self.probeList
+		
+		#if(len(self.trimList) > 1):
+		#	for node in self.probeList:
+		#		sig = utils.genSig(node.f_expression )
+		#		enode = local_hashbank.get(sig, None)
+		#		if enode is None:
+		#			local_hashbank[sig] = node
+		#			mappedList[node] = []
+		#		else:
+		#			mappedList[local_hashbank[sig]].append(node)
+		##	self.trimList = mappedList.keys()
+
+		#print(len(self.probeList), len(self.trimList))
+		#self.parent_dict = helper.build_partial_ast(self.trimList)
+
+		self.__init_workStack__()
+		self.__setup_outputs__()
+
+		#print("Begin Derivatives\n", time.time())
 		self.traverse_ast()
-		print("Finished Derivatives\n", time.time())
+		#print("Finished Derivatives\n", time.time())
 		self.completed.clear()
-		return self.first_order_error()
+		results =  self.first_order_error()
+
+		for node, depList in mappedList.items():
+			for dnode in depList:
+				results[node] = copy.deepcopy(results[node])
+		return results
 
 	

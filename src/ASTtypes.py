@@ -17,7 +17,7 @@ class AST(object):
 		self.depth = 0
 		self.f_expression = None
 		self.children = ()
-		self.parents = ()
+		self.parents = () #set()
 		self.noise = (0,0)
 		self.rnd = 1.0
 
@@ -49,7 +49,7 @@ class AST(object):
 		self.rnd = ops._FP_RND[rnd_type]
 
 	def get_rounding(self):
-		return self.rnd
+		return self.rnd * 1.0
 
 class Num(AST):
 	__slots__ = ['token']
@@ -85,6 +85,10 @@ class FreeVar(AST):
 		else:
 			return seng.var(name)
 
+	@staticmethod
+	def set_noise(obj, valueTup):
+		obj.noise = valueTup
+
 
 	@staticmethod
 	def get_noise(obj, sound=False):
@@ -92,7 +96,7 @@ class FreeVar(AST):
 		       abs(obj.noise[0]) if obj.noise is not None\
 			   else 0
 
-	def mutate_to_abstract(self, value, tid):
+	def mutate_to_abstract(self, tvalue, tid):
 		self.token.value = tvalue
 		self.token.type = tid
 
@@ -121,6 +125,7 @@ class TransOp(AST):
 		self.depth = right.depth+1
 		self.children = (right,)
 		right.parents += (self,)
+		#right.parents.append(self)
 
 	@staticmethod
 	def eval(obj):
@@ -149,6 +154,8 @@ class BinOp(AST):
 		self.depth = max(left.depth, right.depth)+1
 		left.parents += (self,)
 		right.parents += (self,)
+		#left.parents.add(self)
+		#right.parents.add(self)
 
 	@staticmethod
 	def eval(obj):

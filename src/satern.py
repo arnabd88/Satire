@@ -3,6 +3,7 @@
 import sys
 import time
 import argparse 
+import symengine as seng
 #import subprocess
 #
 import Globals
@@ -10,6 +11,7 @@ from gtokens import *
 from lexer import Slex
 from parser import Sparser
 
+from collections import defaultdict
 from AnalyzeNode_Serial import AnalyzeNode_Serial
 from ASTtypes import *
 import helper 
@@ -48,18 +50,89 @@ def parseArguments():
 	return result
 
 
+def rebuildASTNode(node, completed):
+	
+	for child in node.children:
+		if not completed.__contains__(child):
+			rebuildASTNode(child, completed)
+
+	node.depth = 0 if len(node.children)==0 else max([child.depth for child in node.children])+1
+	completed[node] = node.depth
+
+def rebuildAST():
+	print("\n********* Rebuilding AST post abstracttion ********\n")
+	print("Synthesizing expression with fresh FreeVars .... ")
+	logger.info("\n********* Rebuilding AST post abstracttion ********\n")
+	logger.info("Synthesizing expression with fresh FreeVars .... ")
+	probeList = helper.getProbeList()
+
+	completed = defaultdict(int) ## node -> depth
+
+	for node in probeList:
+		if not completed.__contains__(node):
+			rebuildASTNode(node, completed)
+
+	rev_symTable = {v : k for k,v in Globals.symTable.items()}
+	Globals.symTable = {syms : node for node,syms in rev_symTable.items() \
+	                      if completed.__contains__(node)}
 
 
-def simplify_with_abstraction(sel_candidate_list, argList, abs_depth):
+	maxdepth = max([node.depth for node in probeList])
+	Globals.depthTable = { depth : set([ node for node in completed.keys() if node.depth==depth]) for depth in range(maxdepth+1)}
+	del probeList
+	del completed
+	del rev_symTable
 
-	local_hashBank = {}
-	mappedList = {}
+
+	
+			
+
+def abstractNodes(results):
+
+	rev_symTable = {v : k for k,v in Globals.symTable.items()}
+
+	for node, res in results.items():
+		Globals.FID += 1
+		name = seng.var("_F"+str(Globals.FID))
+		name = rev_symTable.get(node, name)
+		node.__class__ = FreeVar
+		node.children = ()
+		node.depth = 0
+
+		#node.set_noise(node, (0.0, 0.0))
+		node.mutate_to_abstract(name, ID)
+
+		errWidth = (res["ERR"]+res["SERR"])*pow(2, -53)
+		intv = [res["INTV"][0] - errWidth, res["INTV"][1] + errWidth]
+
+		Globals.inputVars[name] = {"INTV" : intv}
+		Globals.symTable[name] = node
+
+	del rev_symTable
+
+
+
+
+def simplify_with_abstraction(sel_candidate_list, argList, final=False):
+
 
 	obj = AnalyzeNode_Serial(sel_candidate_list, argList)
 	results = obj.start()
-	print(results)
+
+	del obj
+	if final:
+		return results
+
+	abstractNodes(results)
+	rebuildAST()
 
 
+
+def full_analysis(probeList, argList):
+	#probeList = [it[1] for it in list(filter(lambda x: x[0] in globals.outVars, \
+	#                        [[k,v] for k,v in globals.lhstbl.items()]))]
+
+	return simplify_with_abstraction(probeList, argList, final=True)
 
 
 def	ErrorAnalysis(argList):
@@ -76,13 +149,24 @@ def	ErrorAnalysis(argList):
 
 	if ( argList.enable_abstraction ) :
 		print("Abstraction Enabled... \n")
-		#while ( maxdepth >= bound_maxdepth and max_depth >= bound_mindepth):
-		[abs_depth,sel_candidate_list] = helper.selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth)
-		if ( len(sel_candidate_list) > 0 ):
-			absCount += 1
-			simplify_with_abstraction(sel_candidate_list, argList, abs_depth)
-		else:
-			pass
+		while ( maxdepth >= bound_maxdepth and maxdepth >= bound_mindepth):
+			[abs_depth,sel_candidate_list] = helper.selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth)
+			print("sel-cand-list:", sel_candidate_list)
+			if ( len(sel_candidate_list) > 0 ):
+				absCount += 1
+				simplify_with_abstraction(sel_candidate_list, argList)
+				probeList = helper.getProbeList()
+				maxdepth = max([node.depth for node in probeList]) -1
+				print("Check maxdepth -- ", maxdepth, "\n\n")
+			else:
+				break
+		print("Bypassing abstraction\n")
+		print(maxdepth, bound_maxdepth, bound_mindepth)
+		#print("Expr->", probeList[0].f_expression)
+		logger.info("BYPASSING_ABSTRACTION\n\n")
+		return full_analysis(probeList, argList)
+	else:
+		return full_analysis(probeList, argList)
 	
 
 
@@ -117,6 +201,7 @@ if __name__ == "__main__":
 	ea1 = time.time()
 	results = ErrorAnalysis(argList)
 	ea2 = time.time()
+	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
 	#writeToFile(results)
 
 
@@ -125,6 +210,7 @@ if __name__ == "__main__":
 
 	end_exec_time = time.time()
 	##------ End of Analysis Results ------
+	print("Optimizer Calls: ", Globals.gelpiaID)
 	print("Parsing time : {parsing_time}\n".format(parsing_time = parse_time))
 	print("PreProcessing time : {preprocess_time}\n".format(preprocess_time = pr2-pr1))
 	print("Analysis time : {analysis_time}\n".format(analysis_time = ea2-ea1))

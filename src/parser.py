@@ -100,14 +100,14 @@ class Sparser(object):
 		else:
 			Globals.symTable.__setitem__(token.value, node_exists)
 			#Globals.symTable[str(token.value)] = node_exists
-			## extra check for binops
-			#if( type(node).__name__ == 'BinOp'):
-			#	if node_exists.parents.__contains__(node):
-			#		node_exists.parents.remove(node)
-			#	for child in node_exists.children:
-			#		if child.parents.__contains__(node):
-			#			child.parents.remove(node)
-			#del node
+			# extra check for binops
+			if( type(node).__name__ == 'BinOp'):
+				if node_exists.parents.__contains__(node):
+					node_exists.parents.remove(node)
+				for child in node_exists.children:
+					if child.parents.__contains__(node):
+						child.parents.remove(node)
+			del node
 			return node_exists
 		
 		
@@ -282,7 +282,10 @@ class Sparser(object):
 		#	print(k)
 		print("MaxDepth ->", max(list(Globals.depthTable.keys())+[0]))
 		#print("Num Unique nodes ->", len(Globals.csetbl.keys()))
-
+		#x1 = Globals.symTable[seng.var('x1')]
+		#print(len(x1.parents), len(set(x1.parents)))
+		#for x1p in x1.parents:
+		#	print(x1p.rec_eval(x1p), id(x1p), "\n\n")
 
 if __name__ == "__main__":
 	
@@ -299,6 +302,10 @@ if __name__ == "__main__":
 	print("Num Unique Nodes = ", num_unique_nodes)
 
 	print("Parsing time -> ", end_parse_time - start_parse_time)
+	#x1 = Globals.symTable[seng.var('x1')]
+	#print(len(x1.parents), len(set(x1.parents)))
+	#for x1p in x1.parents:
+	#	print(x1p.rec_eval(x1p), "\n\n")
 
 
 
