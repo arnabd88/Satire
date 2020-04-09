@@ -21,7 +21,7 @@ class AnalyzeNode_Serial(object):
 
 	__slots__ = ['workList', 'next_workList', 'parentTracker', 'completed', \
 	             'Accumulator', 'results', 'bwdDeriv', 'probeList', 'trimList',\
-				 'argList', 'parent_dict', 'simplify']
+				 'argList', 'parent_dict', 'simplify', 'maxdepth', 'force']
 				 
 
 	def initialize(self):
@@ -34,11 +34,13 @@ class AnalyzeNode_Serial(object):
 		self.bwdDeriv = {}#defaultdict(dict)
 
 
-	def __init__(self, probeNodeList, argList):
+	def __init__(self, probeNodeList, argList, maxdepth):
 		self.initialize()
 		self.probeList = probeNodeList
 		self.trimList = probeNodeList
 		self.argList   = argList
+		self.maxdepth = maxdepth
+		self.force = argList.force
 		## builds with side effects
 		self.parent_dict = helper.expression_builder(probeNodeList)
 		#self.parent_dict = helper.build_partial_ast(probeNodeList)
@@ -171,7 +173,16 @@ class AnalyzeNode_Serial(object):
 
 		local_hashbank = {}
 		mappedList = {}
+		#print("Reached here\n")
 		self.trimList = self.probeList
+		maxOpCount = max([seng.count_ops(n.f_expression) for n in self.trimList])
+		abs_depth = max([n.depth for n in self.trimList])
+		#print(maxOpCount, self.maxdepth, abs_depth)
+		if self.force:
+			pass
+		elif maxOpCount > 1000 and self.maxdepth > 10 and abs_depth > 5:
+			return {"maxOpCount" : maxOpCount, "flag" : False}
+			
 		
 		if self.argList.compress:
 			if(len(self.trimList) > 1):

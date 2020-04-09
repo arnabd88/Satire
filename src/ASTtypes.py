@@ -132,7 +132,9 @@ class TransOp(AST):
 		lexpr = ops._FOPS[obj.token.type]([obj.children[0].f_expression])
 		obj.depth = obj.children[0].depth+1
 		obj.rnd = obj.children[0].rnd
-		return obj.simplify(lexpr)
+		lexpr =  obj.simplify(lexpr)
+		#print(seng.count_ops(lexpr))
+		return lexpr
 		#return seng.expand(lexpr)
 
 	@staticmethod
@@ -167,7 +169,10 @@ class BinOp(AST):
 			obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
 
 
-		return obj.simplify(lexpr)
+		lexpr =  obj.simplify(lexpr)
+		#print(seng.count_ops(lexpr))
+		return lexpr
+		#return obj.simplify(lexpr)
 
 	@staticmethod
 	def rec_eval(obj):

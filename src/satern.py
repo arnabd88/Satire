@@ -45,6 +45,7 @@ def parseArguments():
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
 	parser.add_argument('--sound', help='Turn on analysis for higher order errors', default=False, action='store_true')
 	parser.add_argument('--compress', help='Perform signature matching to reduce optimizer calls using hashing and md5 signature', default=False, action='store_true')
+	parser.add_argument('--force', help='Sideline additional tricks used for non-linear examples. Use this option for linear examples', default=False, action='store_true')
 	                                  
 
 	result = parser.parse_args()
@@ -114,11 +115,14 @@ def abstractNodes(results):
 
 
 
-def simplify_with_abstraction(sel_candidate_list, argList, final=False):
+def simplify_with_abstraction(sel_candidate_list, argList, maxdepth, final=False):
 
 
-	obj = AnalyzeNode_Serial(sel_candidate_list, argList)
+	obj = AnalyzeNode_Serial(sel_candidate_list, argList, maxdepth)
 	results = obj.start()
+	if "flag" in results.keys():
+		print("Returned w/o execution-->need to modify bound")
+		return results
 
 	del obj
 	if final:
@@ -126,14 +130,15 @@ def simplify_with_abstraction(sel_candidate_list, argList, final=False):
 
 	abstractNodes(results)
 	rebuildAST()
+	return dict()
 
 
 
-def full_analysis(probeList, argList):
+def full_analysis(probeList, argList, maxdepth):
 	#probeList = [it[1] for it in list(filter(lambda x: x[0] in globals.outVars, \
 	#                        [[k,v] for k,v in globals.lhstbl.items()]))]
 
-	return simplify_with_abstraction(probeList, argList, final=True)
+	return simplify_with_abstraction(probeList, argList, maxdepth, final=True)
 
 
 def	ErrorAnalysis(argList):
@@ -150,21 +155,28 @@ def	ErrorAnalysis(argList):
 		print("Abstraction Enabled... \n")
 		while ( maxdepth >= bound_maxdepth and maxdepth >= bound_mindepth):
 			[abs_depth,sel_candidate_list] = helper.selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth)
-			#print("Canidate List Length:", len(sel_candidate_list))
+			print("Canidate List Length:", len(sel_candidate_list))
 			if ( len(sel_candidate_list) > 0 ):
 				absCount += 1
-				simplify_with_abstraction(sel_candidate_list, argList)
+				results = simplify_with_abstraction(sel_candidate_list, argList, maxdepth)
+				maxopCount = results.get("maxOpCount", 1000)
 				probeList = helper.getProbeList()
 				maxdepth = max([node.depth for node in probeList]) -1
+				if (maxopCount > 1000 and maxdepth > 8 and bound_mindepth > 5):
+					bound_maxdepth = maxdepth if bound_maxdepth > maxdepth else bound_maxdepth - 2 if bound_maxdepth - bound_mindepth > 4 else bound_maxdepth
+					bound_mindepth = bound_mindepth - 2 if bound_maxdepth - bound_mindepth > 4 else bound_mindepth
+				elif maxdepth <= bound_maxdepth and maxdepth > bound_mindepth:
+					bound_maxdepth = maxdepth
+					assert(bound_maxdepth >= bound_mindepth)
 			else:
 				break
 		print("Bypassing abstraction\n")
 		print(maxdepth, bound_maxdepth, bound_mindepth)
 		#print("Expr->", probeList[0].f_expression)
 		logger.info("BYPASSING_ABSTRACTION\n\n")
-		return full_analysis(probeList, argList)
+		return full_analysis(probeList, argList, maxdepth)
 	else:
-		return full_analysis(probeList, argList)
+		return full_analysis(probeList, argList, maxdepth)
 	
 
 
