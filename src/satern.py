@@ -101,13 +101,14 @@ def abstractNodes(results):
 		node.children = ()
 		node.depth = 0
 
-		#node.set_noise(node, (0.0, 0.0))
+		node.set_noise(node, (res["ERR"], res["SERR"]))
 		node.mutate_to_abstract(name, ID)
 
-		errWidth = (res["ERR"]+res["SERR"])*pow(2, -53)
-		intv = [res["INTV"][0] - errWidth, res["INTV"][1] + errWidth]
+		#errWidth = (res["ERR"]+res["SERR"])*pow(2, -53)
+		#intv = [res["INTV"][0] - errWidth, res["INTV"][1] + errWidth]
 
-		Globals.inputVars[name] = {"INTV" : intv}
+		#Globals.inputVars[name] = {"INTV" : intv}
+		Globals.inputVars[name] = {"INTV" : res["INTV"]}
 		Globals.symTable[name] = node
 
 	del rev_symTable
