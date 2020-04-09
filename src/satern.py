@@ -207,11 +207,11 @@ if __name__ == "__main__":
 
 	end_exec_time = time.time()
 	##------ End of Analysis Results ------
-	fout.write("Optimizer Calls: {num_calls}".format(num_calls = Globals.gelpiaID))
-	fout.write("Parsing time : {parsing_time}".format(parsing_time = parse_time))
-	fout.write("PreProcessing time : {preprocess_time}".format(preprocess_time = pr2-pr1))
-	fout.write("Analysis time : {analysis_time}".format(analysis_time = ea2-ea1))
-	fout.write("Full time : {full_time}".format(full_time = end_exec_time-start_exec_time))
+	fout.write("Optimizer Calls: {num_calls}\n".format(num_calls = Globals.gelpiaID))
+	fout.write("Parsing time : {parsing_time}\n".format(parsing_time = parse_time))
+	fout.write("PreProcessing time : {preprocess_time}\n".format(preprocess_time = pr2-pr1))
+	fout.write("Analysis time : {analysis_time}\n".format(analysis_time = ea2-ea1))
+	fout.write("Full time : {full_time}\n".format(full_time = end_exec_time-start_exec_time))
 	logger.info("Optimizer Calls: {num_calls}".format(num_calls = Globals.gelpiaID))
 	logger.info("Parsing time : {parsing_time}".format(parsing_time = parse_time))
 	logger.info("PreProcessing time : {preprocess_time}".format(preprocess_time = pr2-pr1))
