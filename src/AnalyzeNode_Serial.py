@@ -173,22 +173,23 @@ class AnalyzeNode_Serial(object):
 		mappedList = {}
 		self.trimList = self.probeList
 		
-		if(len(self.trimList) > 1):
-			for node in self.probeList:
-				sig = utils.genSig(node.f_expression )
-				enode = local_hashbank.get(sig, None)
-				if enode is None:
-					local_hashbank[sig] = node
-					mappedList[node] = []
-				else:
-					#print("Ever")
-					mappedList[local_hashbank[sig]].append(node)
-			self.trimList = mappedList.keys()
+		if self.argList.compress:
+			if(len(self.trimList) > 1):
+				for node in self.probeList:
+					sig = utils.genSig(node.f_expression )
+					enode = local_hashbank.get(sig, None)
+					if enode is None:
+						local_hashbank[sig] = node
+						mappedList[node] = []
+					else:
+						#print("Ever")
+						mappedList[local_hashbank[sig]].append(node)
+				self.trimList = mappedList.keys()
 
-		print(len(self.probeList), len(self.trimList))
-		logger.info("Primary cand list={l1}, Cmpressed cand list={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
-		#print("const:", [(n.f_expression,id(n)) for n in Globals.depthTable[0]])
-		self.parent_dict = helper.expression_builder(self.trimList, build=False)
+			print(len(self.probeList), len(self.trimList))
+			logger.info("Primary cand list={l1}, Cmpressed cand list={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
+			#print("const:", [(n.f_expression,id(n)) for n in Globals.depthTable[0]])
+			self.parent_dict = helper.expression_builder(self.trimList, build=False)
 
 		self.__init_workStack__()
 		self.__setup_outputs__()

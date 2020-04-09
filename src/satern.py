@@ -44,6 +44,7 @@ def parseArguments():
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
 	parser.add_argument('--sound', help='Turn on analysis for higher order errors', default=False, action='store_true')
+	parser.add_argument('--compress', help='Perform signature matching to reduce optimizer calls using hashing and md5 signature', default=False, action='store_true')
 	                                  
 
 	result = parser.parse_args()
