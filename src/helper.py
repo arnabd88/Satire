@@ -14,14 +14,14 @@ def getProbeList():
 
 def merge( n, node, parent_dict):
 	new_parents = n.parents+node.parents
-	for par in n.parents:
+	for par in new_parents:
 		par.children = tuple(list(map(lambda x: x if x!=n else node, par.children)))
 
 	node.parents = new_parents
-	##Modify other references 'n' can hold
-	#print(n.f_expression)
 	if Globals.depthTable[n.depth].__contains__(n):
 		Globals.depthTable[n.depth].remove(n)
+	elif not Globals.depthTable[n.depth].__contains__(n):
+		pass
 	Globals.symTable = {k:v for k,v in Globals.symTable.items() if v!=n}
 
 	## re-check
@@ -35,30 +35,36 @@ def merge( n, node, parent_dict):
 	return node
 		
 
-def dfs_expression_builder(node, reachable, parent_dict, csetbl):
+def dfs_expression_builder(node, reachable, parent_dict, csetbl, probeList, build):
 
 	for child in node.children:
 		if not reachable[child.depth].__contains__(child):
-			dfs_expression_builder(child, reachable, parent_dict, csetbl)
+			dfs_expression_builder(child, reachable, parent_dict, csetbl, probeList, build)
 		parent_dict[child].append(node)
 
-	node.set_expression(node.eval(node))
+	if build:
+		node.set_expression(node.eval(node))
 	reachable[node.depth].add(node)
 	matchingElemets = [n for n in csetbl[node.f_expression] if n.children == node.children and n!=node]
 	if len(matchingElemets) <= 0 :
 		csetbl[node.f_expression].add(node)
 	else:
 		new_node = node
+		#print("const:", [(n.f_expression,id(n)) for n in Globals.depthTable[0]])
 		for n in matchingElemets:
-			node = merge(n, node, parent_dict)
-			del n
+			if  n not in probeList:
+				#print("Merging:({orig}, {fake})".format(orig=id(node), fake=id(n)))
+				node = merge(n, node, parent_dict)
+				csetbl[node.f_expression].remove(n)
+				del n
+
 
 	#Globals.symTable = {k:v for k,v in Globals.symTable.items() if not removeNodes.__contains__(v)}
 	#for child in node.children:
 	#	parent_dict[child] = [ par for par in child.parents if not removeNodes.__contains__(par)]
 
 
-def expression_builder(probeList):
+def expression_builder(probeList, build=True):
 
 	parent_dict = defaultdict(list)
 	reachable = defaultdict(set)
@@ -67,47 +73,49 @@ def expression_builder(probeList):
 
 	for node in probeList:
 		if not reachable[node.depth].__contains__(node):
-			dfs_expression_builder(node, reachable, parent_dict, csetbl)
+			dfs_expression_builder(node, reachable, parent_dict, csetbl, probeList, build)
 
 	del reachable
+	del csetbl
 
 	return parent_dict
 
 
 ## for these two, expressions are pre-built
-def dfs_partial_ast(node, reachable, parent_dict):
-
-	for child in node.children:
-		if reachable[child.depth].__contains__(child):
-			pass
-		else:
-			dfs_partial_ast(child, reachable, parent_dict)
-		parent_dict[child].append(node)
-
-	#node.set_expression(node.eval(node))
-	#print(node.f_expression)
-	reachable[node.depth].add(node)
-
-
-def build_partial_ast(probeList):
-
-	parent_dict = [] #defaultdict(set)
-	reachable = defaultdict(set)
-
-	for node in probeList:
-		if not reachable[node.depth].__contains__(node):
-			dfs_partial_ast(node, reachable, parent_dict)
-
-	del reachable
-
-	# Debug Check
-	#for k,v in parent_dict.items():
-	#	if k.depth > 2:
-	#		print(k.depth, len(v), len(k.parents))
-	#print(Globals.symTable.keys())
-	#selN = Globals.symTable[seng.var('xp2_8')]
-	#print(selN.depth, len(selN.parents))
-	return parent_dict
+#def dfs_partial_ast(node, reachable, parent_dict, csetbl, probeList):
+#
+#	for child in node.children:
+#		if not reachable[child.depth].__contains__(child):
+#			dfs_partial_ast(child, reachable, parent_dict, csetbl, probeList)
+#		parent_dict[child].append(node)
+#
+#	node.set_expression(node.eval(node))
+#	reachable[node.depth].add(node)
+#	matchingElemets = [n for n in csetbl[node.f_expression] if n.children == node.children and n!=node]
+#	if len(matchingElemets) <= 0 :
+#		csetbl[node.f_expression].add(node)
+#	else:
+#		new_node = node
+#		for n in matchingElemets:
+#			if  n not in probeList:
+#				node = merge(n, node, parent_dict)
+#				del n
+#
+#
+#
+#def build_partial_ast(probeList):
+#
+#	parent_dict = defaultdict(list)
+#	reachable = defaultdict(set)
+#	csetbl = defaultdict(set)
+#
+#	for node in probeList:
+#		if not reachable[node.depth].__contains__(node):
+#			dfs_partial_ast(node, reachable, parent_dict, csetbl, probeList)
+#
+#	del reachable
+#
+#	return parent_dict
 
 
 def pretraverse(node, reachable):
@@ -134,15 +142,17 @@ def PreProcessAST():
 		if not reachable[node.depth].__contains__(node):
 			pretraverse(node, reachable)
 
-	print("Pre :", len(Globals.symTable))
+	#print("Pre :", len(Globals.symTable))
 	Globals.symTable =	{syms : node for node,syms in rhstbl.items() \
 							if reachable[node.depth].__contains__(node)}
 	print("Post :", len(Globals.symTable))
 	prev_numNodes = sum([ len(Globals.depthTable[el]) for el in Globals.depthTable.keys() if el!=0] )
 	Globals.depthTable = reachable
 	curr_numNodes = sum([ len(Globals.depthTable[el]) for el in Globals.depthTable.keys() if el!=0] )
-	print("Pre Total nodes post processing: ", prev_numNodes)
-	print("Pre Total nodes post processing: ", curr_numNodes)
+	print("Total number of nodes pre-processing: {prev}".format(prev=prev_numNodes))
+	print("Total number of nodes post-processing: {curr}".format(curr=curr_numNodes))
+	logger.info("Total number of nodes pre-processing: {prev}".format(prev=prev_numNodes))
+	logger.info("Total number of nodes post-processing: {curr}".format(curr=curr_numNodes))
 
 def filterCandidate(bdmin, bdmax, dmax):
 	return list(filter( lambda x:x.depth >= bdmin and x.depth <= bdmax ,\
@@ -161,7 +171,7 @@ def evaluate_cost( node, max_abs_depth):
 def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 
 	PreCandidateList = filterCandidate(bound_mindepth, bound_maxdepth, maxdepth)
-	print("Length Precand List =", len(PreCandidateList))
+	#print("Length Precand List =", len(PreCandidateList))
 
 	## Increment the depth bound if candidate list is Null
 	## Keep doing until nodes become available for abstraction
@@ -188,13 +198,15 @@ def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 		sum_depth_cost.sort(key=lambda x:(-x[1], x[0]))
 		abs_depth = sum_depth_cost[0][0]
 
+
+		## Obtain all candidate list at this level
+		CandidateList = Globals.depthTable[abs_depth]
+
 		print("CURRENT AST_DEPTH = : {ast_depth}".format(ast_depth=maxdepth))
 		print("ABSTRACTION_DEPTH : {abs_depth}".format(abs_depth=abs_depth))
 		logger.info("CURRENT AST_DEPTH = : {ast_depth}".format(ast_depth=maxdepth))
 		logger.info("ABSTRACTION_DEPTH : {abs_depth}".format(abs_depth=abs_depth))
-
-		## Obtain all candidate list at this level
-		CandidateList = Globals.depthTable[abs_depth]
+		logger.info("abstraction list size : {list_size}".format(list_size = len(CandidateList)))
 
 		## Check back if filter is required on this
 

@@ -33,19 +33,19 @@ logging.set_log_filename(None)
 gelpia.setup_requirements(gelpia.GIT_DIR)
 gelpia_rust_executable = gelpia.setup_rust_env(gelpia.GIT_DIR, False)
 
-gelpia_input_epsilon = 1e-4
-gelpia_output_epsilon = 1e-4
-gelpia_output_epsilon_relative = 1e-4
+gelpia_input_epsilon = 1e-2
+gelpia_output_epsilon = 1e-2
+gelpia_output_epsilon_relative = 1e-2
 gelpia_epsilons = (gelpia_input_epsilon,
                    gelpia_output_epsilon,
                    gelpia_output_epsilon_relative)
-gelpia_timeout = 100
+gelpia_timeout = 10
 gelpia_grace = 0
 gelpia_update = 0
 gelpia_max_iters = 0
 gelpia_seed = 0
 
-timeout = 100
+timeout = 10
 
 
 def hashSig( inSig, alg ):
@@ -467,9 +467,9 @@ def generate_signature(sym_expr):
 		g1 = time.time()
 		Globals.hashBank[sig] = invoke_gelpia(sym_expr, inputStr)
 		g2 = time.time()
-		print("Gelpia solve = ", g2 - g1, "\n\n")
+		print("Gelpia solve = ", g2 - g1, "opCount =", seng.count_ops(sym_expr))
 	else:
-		#print("MATCH FOUND")
+		print("MATCH FOUND")
 		#Globals.hashBank[sig] = check
 		pass
 

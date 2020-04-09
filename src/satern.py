@@ -140,8 +140,6 @@ def	ErrorAnalysis(argList):
 	absCount = 1
 	probeList = helper.getProbeList()
 	maxdepth = max([node.depth for node in probeList])
-	maxdepth1 = max(list(Globals.depthTable.keys())+[0])
-	assert(maxdepth == maxdepth1)
 
 	logger.info("AST_DEPTH : {AST_DEPTH}".format(AST_DEPTH = maxdepth))
 
@@ -151,13 +149,12 @@ def	ErrorAnalysis(argList):
 		print("Abstraction Enabled... \n")
 		while ( maxdepth >= bound_maxdepth and maxdepth >= bound_mindepth):
 			[abs_depth,sel_candidate_list] = helper.selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth)
-			print("sel-cand-list:", sel_candidate_list)
+			#print("Canidate List Length:", len(sel_candidate_list))
 			if ( len(sel_candidate_list) > 0 ):
 				absCount += 1
 				simplify_with_abstraction(sel_candidate_list, argList)
 				probeList = helper.getProbeList()
 				maxdepth = max([node.depth for node in probeList]) -1
-				print("Check maxdepth -- ", maxdepth, "\n\n")
 			else:
 				break
 		print("Bypassing abstraction\n")
@@ -210,11 +207,22 @@ if __name__ == "__main__":
 
 	end_exec_time = time.time()
 	##------ End of Analysis Results ------
-	print("Optimizer Calls: ", Globals.gelpiaID)
+	fout.write("Optimizer Calls: {num_calls}".format(num_calls = Globals.gelpiaID))
+	fout.write("Parsing time : {parsing_time}".format(parsing_time = parse_time))
+	fout.write("PreProcessing time : {preprocess_time}".format(preprocess_time = pr2-pr1))
+	fout.write("Analysis time : {analysis_time}".format(analysis_time = ea2-ea1))
+	fout.write("Full time : {full_time}".format(full_time = end_exec_time-start_exec_time))
+	logger.info("Optimizer Calls: {num_calls}".format(num_calls = Globals.gelpiaID))
+	logger.info("Parsing time : {parsing_time}".format(parsing_time = parse_time))
+	logger.info("PreProcessing time : {preprocess_time}".format(preprocess_time = pr2-pr1))
+	logger.info("Analysis time : {analysis_time}".format(analysis_time = ea2-ea1))
+	logger.info("Full time : {full_time}".format(full_time = end_exec_time-start_exec_time))
+	print("Optimizer Calls: {num_calls}".format(num_calls = Globals.gelpiaID))
 	print("Parsing time : {parsing_time}\n".format(parsing_time = parse_time))
 	print("PreProcessing time : {preprocess_time}\n".format(preprocess_time = pr2-pr1))
 	print("Analysis time : {analysis_time}\n".format(analysis_time = ea2-ea1))
 	print("Full time : {full_time}\n".format(full_time = end_exec_time-start_exec_time))
+	fout.close()
 
 
 

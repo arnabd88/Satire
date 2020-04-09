@@ -3,7 +3,7 @@
 import sys
 import time
 import copy
-import globals
+import Globals
 from gtokens import *
 import symengine as seng
 import ops_def as ops
@@ -119,7 +119,10 @@ class AnalyzeNode_Serial(object):
 
 
 	def propagate_symbolic(self, node):
-		#print("@node depth = ", node.depth)
+		#print("@node depth = ", node.depth, type(node).__name__, node.f_expression)
+		#print([n.f_expression for n in node.parents])
+		#print(node.parents)
+		#print(self.parent_dict[node])
 		for outVar in self.bwdDeriv[node].keys():
 			expr_solve = (((\
 			                (self.bwdDeriv[node][outVar]))*\
@@ -147,7 +150,7 @@ class AnalyzeNode_Serial(object):
 
 	def first_order_error(self):
 
-		for node in self.probeList:
+		for node in self.trimList:
 			if not self.completed[node.depth].__contains__(node):
 				self.visit_node_ferror(node)
 
@@ -170,19 +173,22 @@ class AnalyzeNode_Serial(object):
 		mappedList = {}
 		self.trimList = self.probeList
 		
-		#if(len(self.trimList) > 1):
-		#	for node in self.probeList:
-		#		sig = utils.genSig(node.f_expression )
-		#		enode = local_hashbank.get(sig, None)
-		#		if enode is None:
-		#			local_hashbank[sig] = node
-		#			mappedList[node] = []
-		#		else:
-		#			mappedList[local_hashbank[sig]].append(node)
-		##	self.trimList = mappedList.keys()
+		if(len(self.trimList) > 1):
+			for node in self.probeList:
+				sig = utils.genSig(node.f_expression )
+				enode = local_hashbank.get(sig, None)
+				if enode is None:
+					local_hashbank[sig] = node
+					mappedList[node] = []
+				else:
+					#print("Ever")
+					mappedList[local_hashbank[sig]].append(node)
+			self.trimList = mappedList.keys()
 
-		#print(len(self.probeList), len(self.trimList))
-		#self.parent_dict = helper.build_partial_ast(self.trimList)
+		print(len(self.probeList), len(self.trimList))
+		logger.info("Primary cand list={l1}, Cmpressed cand list={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
+		#print("const:", [(n.f_expression,id(n)) for n in Globals.depthTable[0]])
+		self.parent_dict = helper.expression_builder(self.trimList, build=False)
 
 		self.__init_workStack__()
 		self.__setup_outputs__()
@@ -192,6 +198,8 @@ class AnalyzeNode_Serial(object):
 		#print("Finished Derivatives\n", time.time())
 		self.completed.clear()
 		results =  self.first_order_error()
+
+		del local_hashbank
 
 		for node, depList in mappedList.items():
 			for dnode in depList:

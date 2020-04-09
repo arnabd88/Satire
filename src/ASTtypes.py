@@ -81,7 +81,7 @@ class FreeVar(AST):
 		obj.set_rounding(round_mode)
 		intv = Globals.inputVars.get(obj.token.value, None)
 		if intv is not None and (intv["INTV"][0]==intv["INTV"][1]):
-			return intv[0]
+			return intv["INTV"][0]
 		else:
 			return seng.var(name)
 
