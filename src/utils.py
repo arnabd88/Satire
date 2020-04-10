@@ -415,8 +415,9 @@ def genSig(sym_expr):
 	except ValueError:
 		pass
 	d = OrderedDict()
-	freeSyms = [i for i in sym_expr.free_symbols]
-	freeSyms.sort()
+	flist = [str(i) for i in sym_expr.free_symbols]
+	flist.sort()
+	freeSyms = [seng.var(fs) for fs in flist]
 	# make this to a map
 	#for i in range(0, len(freeSyms)):
 	#	inp = freeSyms[i]
