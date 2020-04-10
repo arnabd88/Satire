@@ -215,7 +215,8 @@ class AnalyzeNode_Serial(object):
 
 		for node, depList in mappedList.items():
 			for dnode in depList:
-				results[node] = copy.deepcopy(results[node])
+				results[dnode] = copy.deepcopy(results[node])
+				assert(dnode in self.probeList)
 		return results
 
 	
