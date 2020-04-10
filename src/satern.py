@@ -116,10 +116,10 @@ def abstractNodes(results):
 
 
 
-def simplify_with_abstraction(sel_candidate_list, argList, maxdepth, final=False):
+def simplify_with_abstraction(sel_candidate_list, argList, maxdepth, force=False, final=False):
 
 
-	obj = AnalyzeNode_Serial(sel_candidate_list, argList, maxdepth)
+	obj = AnalyzeNode_Serial(sel_candidate_list, argList, maxdepth, force)
 	results = obj.start()
 	if "flag" in results.keys():
 		print("Returned w/o execution-->need to modify bound")
@@ -139,7 +139,7 @@ def full_analysis(probeList, argList, maxdepth):
 	#probeList = [it[1] for it in list(filter(lambda x: x[0] in globals.outVars, \
 	#                        [[k,v] for k,v in globals.lhstbl.items()]))]
 
-	return simplify_with_abstraction(probeList, argList, maxdepth, final=True)
+	return simplify_with_abstraction(probeList, argList, maxdepth, force=True, final=True)
 
 
 def	ErrorAnalysis(argList):

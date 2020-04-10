@@ -34,13 +34,13 @@ class AnalyzeNode_Serial(object):
 		self.bwdDeriv = {}#defaultdict(dict)
 
 
-	def __init__(self, probeNodeList, argList, maxdepth):
+	def __init__(self, probeNodeList, argList, maxdepth, force):
 		self.initialize()
 		self.probeList = probeNodeList
 		self.trimList = probeNodeList
 		self.argList   = argList
 		self.maxdepth = maxdepth
-		self.force = argList.force
+		self.force = force
 		## builds with side effects
 		self.parent_dict = helper.expression_builder(probeNodeList)
 		#self.parent_dict = helper.build_partial_ast(probeNodeList)
