@@ -409,9 +409,11 @@ def extract_input_dep(free_syms):
     #return "".join(ret_list)
 
 def genSig(sym_expr):
-	if seng.count_ops(sym_expr) == 0:
-		return float(str(sym_expr))
-	else:
+	try:
+		if seng.count_ops(sym_expr) == 0 :
+			return float(str(sym_expr))
+	except ValueError:
+		pass
 		d = OrderedDict()
 		freeSyms = [i for i in sym_expr.free_symbols]
 		freeSyms.sort()
