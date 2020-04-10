@@ -414,23 +414,23 @@ def genSig(sym_expr):
 			return float(str(sym_expr))
 	except ValueError:
 		pass
-		d = OrderedDict()
-		freeSyms = [i for i in sym_expr.free_symbols]
-		freeSyms.sort()
-		# make this to a map
-		#for i in range(0, len(freeSyms)):
-		#	inp = freeSyms[i]
-		#	d[inp] = str(i)+"_"+"{intv}".format(intv=Globals.inputVars[inp]["INTV"])
+	d = OrderedDict()
+	freeSyms = [i for i in sym_expr.free_symbols]
+	freeSyms.sort()
+	# make this to a map
+	#for i in range(0, len(freeSyms)):
+	#	inp = freeSyms[i]
+	#	d[inp] = str(i)+"_"+"{intv}".format(intv=Globals.inputVars[inp]["INTV"])
 
-		fpt = map(lambda i : (str(freeSyms[i]), str(i)+"_"+"{intv}".format(intv=Globals.inputVars[freeSyms[i]]["INTV"])), \
-		                      range(len(freeSyms)))
-		d =	{p[0]:p[1] for p in fpt}
+	fpt = map(lambda i : (str(freeSyms[i]), str(i)+"_"+"{intv}".format(intv=Globals.inputVars[freeSyms[i]]["INTV"])), \
+	                      range(len(freeSyms)))
+	d =	{p[0]:p[1] for p in fpt}
 
-		regex = re.compile("(%s)" % "|".join(map(re.escape, d.keys())))
+	regex = re.compile("(%s)" % "|".join(map(re.escape, d.keys())))
 
-		strSig = regex.sub(lambda mo: d[mo.string[mo.start():mo.end()]], str(sym_expr))
+	strSig = regex.sub(lambda mo: d[mo.string[mo.start():mo.end()]], str(sym_expr))
 
-		return hashSig(strSig, "md5")
+	return hashSig(strSig, "md5")
 
 def generate_signature(sym_expr):
 	try:
