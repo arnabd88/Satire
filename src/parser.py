@@ -31,7 +31,7 @@ class Sparser(object):
 		raise Exception('Invalid Syntax while parsing')
 
 	def consume(self, token_type):
-		#print(self.current_token.type, token_type, self.current_token.value)
+		print(self.current_token.type, token_type, self.current_token.value)
 		if self.current_token.type == token_type:
 			self.current_token = self.lexer.get_next_token()
 		else:
@@ -238,6 +238,61 @@ class Sparser(object):
 			self.consume(SEMICOLON)
 			self.interval()
 
+
+
+	def intv_expr(self):
+		"""
+		expr	:	term ((PLUS | MINUS) term)*
+		"""
+		node = self.intv_term()
+
+		while self.current_token.type in (PLUS, MINUS):
+			token = self.current_token
+			self.consume(token.type)
+			node = BinOp(left=node, token=token, right=self.intv_term())
+
+		return node
+
+
+	def intv_term(self):
+		""" term : factor ((MUL | DIV) factor)* """
+		node = self.intv_factor()
+
+		while self.current_token.type in (MUL, DIV):
+			token = self.current_token
+			self.consume(token.type)
+			node = BinOp(left=node, token=token, right=self.intv_factor())
+
+		return node
+
+	def intv_factor(self):
+		"""
+			factor	:	PLUS factor
+					|	MINUS factor | INTEGER | FLOAT 
+					|	LPAREN expr RPAREN
+					|	sqrt/sin/cos/log/exp/tan/cot/sec/cosh/sinh(expr)	|	ID
+		"""
+		token = self.current_token
+		if token.type in (INTEGER, FLOAT):
+			self.consume(token.type)
+			#node = self.CommonLut(Num(token), token)
+			#node = self.CheckSymTable(Num(token), token)
+			#if not Globals.constTable.__contains__(token.value):
+			#	Globals.constTable[token.value] = Num(token)
+			# Globals.constTable[token.value] = Globals.constTable.get(token.value, Num(token))
+			# return Globals.constTable[token.value]
+			return Num(token)
+		elif token.type == LPAREN:
+			self.consume(LPAREN)
+			node = self.intv_expr()
+			self.consume(RPAREN)
+			return node
+		else:
+			self.error()
+			#return node
+
+
+
 	def interval(self):
 		while self.current_token.type == ID:
 			var_token = self.current_token
@@ -249,14 +304,17 @@ class Sparser(object):
 			self.consume(LPAREN)
 			#n = self.expr()
 			#left = n.rec_eval(n)
-			left = self.current_token.value
-			self.consume(FLOAT)
+			#left = self.current_token.value
+			n = self.intv_expr()
+			left = n.rec_eval(n)
+			#self.consume(FLOAT)
 			self.consume(COMMA)
 			#n = self.expr()
-			right = self.current_token.value
-			#right = n.rec_eval(n)
+			#right = self.current_token.value
+			n = self.intv_expr()
+			right = n.rec_eval(n)
 			#print(left, ":", right)
-			self.consume(FLOAT)
+			#self.consume(FLOAT)
 			self.consume(RPAREN)
 			
 			# create the input symbols here
