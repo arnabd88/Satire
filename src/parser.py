@@ -31,7 +31,7 @@ class Sparser(object):
 		raise Exception('Invalid Syntax while parsing')
 
 	def consume(self, token_type):
-		print(self.current_token.type, token_type, self.current_token.value)
+		#print(self.current_token.type, token_type, self.current_token.value)
 		if self.current_token.type == token_type:
 			self.current_token = self.lexer.get_next_token()
 		else:
