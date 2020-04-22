@@ -130,8 +130,8 @@ int main(int argc, char** argv)
 		if( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;		
 		int emp_sat_lost_bits = ceil(log(fabs(maxsaterr/val_dp)*pow(2,53))/log(2));
 		int emp_act_lost_bits = max((int)ceil(log(fabs((val_qp - val_dp)/val_qp)*pow(2,53))/log(2)), 0);
-		//fprintf(fp, "%d, %0.50llf, %0.50llf, %d, %d, %d\n",i+1,  fabs(val_dp - val_sp), fabs(val_qp - val_dp), emp_sat_lost_bits, emp_act_lost_bits, emp_sat_lost_bits-emp_act_lost_bits);
 		fprintf(fp, "%d, %d, %d, %d\n",i+1,  emp_sat_lost_bits, emp_act_lost_bits, emp_sat_lost_bits-emp_act_lost_bits);
+		//fprintf(fp, "%d, %0.50llf, %0.50llf, %d, %d, %d\n",i+1,  fabs(val_dp - val_sp), fabs(val_qp - val_dp), emp_sat_lost_bits, emp_act_lost_bits, emp_sat_lost_bits-emp_act_lost_bits);
 		//cout << fabs(val_dp - val_sp) << " , " <<  fabs(val_qp - val_dp) << endl ;
 
 		//cout << fabs(val_double - val_quad) << endl ;
