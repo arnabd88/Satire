@@ -44,7 +44,7 @@ python3 ../../src/satern.py \
 python3 ../../src/satern.py \
         --std \
 		--file fft_4096pt_sat.txt \
-		--logfile fft_4096pt_sat_abs-serial_10_20.pylog \
-		--outfile fft_4096pt_sat_abs-serial_10_20.out
+		--logfile fft_4096pt_sat_abs-serial_noAbs.pylog \
+		--outfile fft_4096pt_sat_abs-serial_noAbs.out
 
 
