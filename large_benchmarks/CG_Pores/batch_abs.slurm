@@ -11,95 +11,41 @@
 source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
-# Abs window : (10,20)
+
+# ino Abs
 python3 ../../src/satern.py \
         --std \
 		--file CG_Pores_noError_K20_N30_E0.0.txt \
-		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_10_20.pylog \
-		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_10_20.out \
-		--enable-abstraction \
-		--mindepth 10 \
-		--maxdepth 20
+		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_noAbs.pylog \
+		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_noAbs.out
 
-# Abs window : (15,25)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_noError_K20_N30_E0.0.txt \
-		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_15_25.pylog \
-		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_15_25.out \
-		--enable-abstraction \
-		--mindepth 15 \
-		--maxdepth 25
-
-# Abs window : (20,40)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_noError_K20_N30_E0.0.txt \
-		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_20_40.pylog \
-		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_20_40.out \
-		--enable-abstraction \
-		--mindepth 20 \
-		--maxdepth 40
-
-## Next One
-# Abs window : (10,20)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.1.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.1_abs-serial_10_20.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.1_abs-serial_10_20.out \
-		--enable-abstraction \
-		--mindepth 10 \
-		--maxdepth 20
-
-# Abs window : (15,25)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.1.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.1_abs-serial_15_25.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.1_abs-serial_15_25.out \
-		--enable-abstraction \
-		--mindepth 15 \
-		--maxdepth 25
-
-# Abs window : (20,40)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.1.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.1_abs-serial_20_40.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.1_abs-serial_20_40.out \
-		--enable-abstraction \
-		--mindepth 20 \
-		--maxdepth 40
-
-# Enxt one
-# Abs window : (10,20)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.25.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.25_abs-serial_10_20.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.25_abs-serial_10_20.out \
-		--enable-abstraction \
-		--mindepth 10 \
-		--maxdepth 20
-
-# Abs window : (15,25)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.25.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.25_abs-serial_15_25.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.25_abs-serial_15_25.out \
-		--enable-abstraction \
-		--mindepth 15 \
-		--maxdepth 25
-
-# Abs window : (20,40)
-python3 ../../src/satern.py \
-        --std \
-		--file CG_Pores_InError_K20_N30_E0.25.txt \
-		--logfile CG_Pores_InError_K20_N30_E0.25_abs-serial_20_40.pylog \
-		--outfile CG_Pores_InError_K20_N30_E0.25_abs-serial_20_40.out \
-		--enable-abstraction \
-		--mindepth 20 \
-		--maxdepth 40
-
+## Abs window : (10,20)
+#python3 ../../src/satern.py \
+#        --std \
+#		--file CG_Pores_noError_K20_N30_E0.0.txt \
+#		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_10_20.pylog \
+#		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_10_20.out \
+#		--enable-abstraction \
+#		--mindepth 10 \
+#		--maxdepth 20
+#
+## Abs window : (15,25)
+#python3 ../../src/satern.py \
+#        --std \
+#		--file CG_Pores_noError_K20_N30_E0.0.txt \
+#		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_15_25.pylog \
+#		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_15_25.out \
+#		--enable-abstraction \
+#		--mindepth 15 \
+#		--maxdepth 25
+#
+## Abs window : (20,40)
+#python3 ../../src/satern.py \
+#        --std \
+#		--file CG_Pores_noError_K20_N30_E0.0.txt \
+#		--logfile CG_Pores_noError_K20_N30_E0.0_abs-serial_20_40.pylog \
+#		--outfile CG_Pores_noError_K20_N30_E0.0_abs-serial_20_40.out \
+#		--enable-abstraction \
+#		--mindepth 20 \
+#		--maxdepth 40
+#
