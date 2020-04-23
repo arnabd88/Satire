@@ -11,6 +11,13 @@
 source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
+# noAbs
+python3 ../../src/satern.py \
+        --std \
+		--file CG_arc_noErr_K20_N130_E0.0.txt \
+		--logfile CG_arc_noErr_K20_N130_E0.0_abs-serial_noAbs.pylog \
+		--outfile CG_arc_noErr_K20_N130_E0.0_abs-serial_noAbs.out
+
 # Abs window : (10,20)
 python3 ../../src/satern.py \
         --std \
