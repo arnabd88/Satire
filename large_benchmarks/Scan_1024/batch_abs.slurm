@@ -31,6 +31,7 @@ python3 ../../src/satern.py \
 		--mindepth 15 \
 		--maxdepth 25
 
+# Abs window : (20,40)
 python3 ../../src/satern.py \
         --std \
 		--file Scan_1024pt_sat.txt \
@@ -39,3 +40,10 @@ python3 ../../src/satern.py \
 		--enable-abstraction \
 		--mindepth 20 \
 		--maxdepth 40
+
+# No-Abs window 
+python3 ../../src/satern.py \
+        --std \
+		--file Scan_1024pt_sat.txt \
+		--logfile Scan_1024pt_sat_abs-serial_noAbs.pylog \
+		--outfile Scan_1024pt_sat_abs-serial_noAbs.out
