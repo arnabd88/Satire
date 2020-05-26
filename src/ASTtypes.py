@@ -5,6 +5,7 @@ import symengine as seng
 import ops_def as ops
 import utils
 import logging
+from gtokens import *
 
 log = logging.getLogger(__name__)
 
@@ -162,11 +163,12 @@ class BinOp(AST):
 	@staticmethod
 	def eval(obj):
 		lexpr = ops._FOPS[obj.token.type]([child.f_expression for child in obj.children])
-		if (seng.Abs(obj.children[0].f_expression)==1.0 or \
-		seng.Abs(obj.children[1].f_expression)==1.0):
+		obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
+		if ((seng.Abs(obj.children[0].f_expression)==1.0 or \
+		seng.Abs(obj.children[1].f_expression)==1.0) and obj.token.type==MUL):
 			obj.rnd = 0.0
-		else:
-			obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
+		#else:
+		#	obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
 
 
 		lexpr =  obj.simplify(lexpr)
