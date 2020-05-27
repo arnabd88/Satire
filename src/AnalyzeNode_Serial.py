@@ -43,6 +43,9 @@ class AnalyzeNode_Serial(object):
 		self.force = force
 		## builds with side effects
 		self.parent_dict = helper.expression_builder(probeNodeList)
+		#print("\nAbstraction @ expressions =>")
+		#for node in probeNodeList:
+		#	print(node.depth, node.f_expression)
 		#self.parent_dict = helper.build_partial_ast(probeNodeList)
 		#self.__init_workStack__()
 		#self.__setup_outputs__()

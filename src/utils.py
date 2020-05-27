@@ -33,16 +33,16 @@ logging.set_log_filename(None)
 gelpia.setup_requirements(gelpia.GIT_DIR)
 gelpia_rust_executable = gelpia.setup_rust_env(gelpia.GIT_DIR, False)
 
-gelpia_input_epsilon = 1e-4
-gelpia_output_epsilon = 1e-4
-gelpia_output_epsilon_relative = 1e-4
+gelpia_input_epsilon = 1e-2
+gelpia_output_epsilon = 1e-2
+gelpia_output_epsilon_relative = 1e-2
 gelpia_epsilons = (gelpia_input_epsilon,
                    gelpia_output_epsilon,
                    gelpia_output_epsilon_relative)
 gelpia_timeout = 10
 gelpia_grace = 0
 gelpia_update = 0
-gelpia_max_iters = 100
+gelpia_max_iters = 1000
 gelpia_seed = 0
 
 timeout = 10
@@ -294,8 +294,8 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	str_expr = re.sub(r'im\b', "0.0*", str_expr)
 	#print("Pass conversion gelpia")
 	str_expr = inputStr + str_expr
-	Globals.gelpiaID += 1
 	#print("Begining New gelpia query->ID:", Globals.gelpiaID)
+	Globals.gelpiaID += 1
 	fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
 	fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
 	fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
@@ -406,8 +406,10 @@ def invoke_gelpia_herror(symExpr, inputStr, label="Func-> Dur:"):
 	
 def extract_input_dep(free_syms):
 	ret_list = list()
-	for fsyms in free_syms:
-		ret_list += [str(fsyms), " = ", str(Globals.inputVars[fsyms]["INTV"]), ";"]
+	flist = [str(i) for i in free_syms]
+	flist.sort()
+	for fsyms in flist:
+		ret_list += [str(fsyms), " = ", str(Globals.inputVars[seng.var(fsyms)]["INTV"]), ";"]
 	return "".join(ret_list)
     #for name,val in inputs.items():
     #    ret_list += [name, " = ", str(val["INTV"]), ";"]
@@ -473,15 +475,23 @@ def generate_signature(sym_expr):
 		inputStr = extract_input_dep(list(sym_expr.free_symbols))
 		#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
 		g1 = time.time()
-		Globals.hashBank[sig] = invoke_gelpia(sym_expr, inputStr)
+		val = invoke_gelpia(sym_expr, inputStr)
+		#print("Actual return :", val, Globals.gelpiaID)
+		Globals.hashBank[sig] = [val, Globals.gelpiaID] #invoke_gelpia(sym_expr, inputStr)
 		g2 = time.time()
 		print("Gelpia solve = ", g2 - g1, "opCount =", seng.count_ops(sym_expr))
 	else:
-		print("MATCH FOUND")
-		#Globals.hashBank[sig] = check
+		#inputStr = extract_input_dep(list(sym_expr.free_symbols))
+		#orig_query = invoke_gelpia(sym_expr, inputStr)
+		#hashed_query = Globals.hashBank[sig][0]
+		#match_queryid = Globals.hashBank[sig][1]
+		#print("MATCH FOUND")
+		#if orig_query != hashed_query:
+		#	print(orig_query, hashed_query,  match_queryid, Globals.gelpiaID)
+		##Globals.hashBank[sig] = check
 		pass
 
-	return Globals.hashBank[sig]
+	return Globals.hashBank[sig][0]
 
 
 def wrap_generate_signature( sym_expr, collect_list, index):
@@ -589,23 +599,23 @@ def extract_partialAST(NodeList):
 ########## Extra code for the selective tuner ####################
 ### some is redundant, remove later #############
 
-def extract_input_dep(free_syms, inputVars=Globals.inputVars):
-	ret_list = list()
-	for fsyms in free_syms:
-		#print(fsyms)
-		#print(inputVars.keys())
-		#print(inputVars[fsyms])
-		ret_list += [str(fsyms), " = ", str(inputVars[fsyms]["INTV"]), ";"]
-	return "".join(ret_list)
-
-def generate_signature_tuner(sym_expr, inputVars=Globals.inputVars):
-
-	try:
-	    const_intv = float(str(sym_expr))
-	    return [const_intv, const_intv]
-	except ValueError:
-	    pass
-	#inputStr = extract_input_dep(list(map(str, sym_expr.free_symbols)), inputVars)
-	inputStr = extract_input_dep(sym_expr.free_symbols, inputVars)
-	#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
-	return invoke_gelpia(sym_expr, inputStr)
+#def extract_input_dep(free_syms, inputVars=Globals.inputVars):
+#	ret_list = list()
+#	for fsyms in free_syms:
+#		#print(fsyms)
+#		#print(inputVars.keys())
+#		#print(inputVars[fsyms])
+#		ret_list += [str(fsyms), " = ", str(inputVars[fsyms]["INTV"]), ";"]
+#	return "".join(ret_list)
+#
+#def generate_signature_tuner(sym_expr, inputVars=Globals.inputVars):
+#
+#	try:
+#	    const_intv = float(str(sym_expr))
+#	    return [const_intv, const_intv]
+#	except ValueError:
+#	    pass
+#	#inputStr = extract_input_dep(list(map(str, sym_expr.free_symbols)), inputVars)
+#	inputStr = extract_input_dep(sym_expr.free_symbols, inputVars)
+#	#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
+#	return invoke_gelpia(sym_expr, inputStr)

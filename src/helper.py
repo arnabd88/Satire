@@ -170,6 +170,11 @@ def evaluate_cost( node, max_abs_depth):
 
 def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 
+
+	if bound_mindepth == bound_maxdepth and bound_maxdepth <= maxdepth:
+		PreCandidateList = Globals.depthTable[bound_mindepth]
+		return [bound_mindepth, PreCandidateList]
+
 	PreCandidateList = filterCandidate(bound_mindepth, bound_maxdepth, maxdepth)
 	#print("Length Precand List =", len(PreCandidateList))
 
@@ -184,7 +189,8 @@ def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 	if(len(PreCandidateList) <= 0):
 		return []
 	else:
-		f = lambda x : float(x.depth)/(loc_bdmax) + 0.1
+		#f = lambda x : float(x.depth)/(loc_bdmax) + 0.1
+		f = lambda x : float(x.depth)/(maxdepth) + 0.1
 		g = lambda x, y : (-1)*y*math.log(y,2)*len(x.parents)
 		cost_list = list(map( lambda x : [x.depth, g(x, f(x))], \
 		                 PreCandidateList \
@@ -226,7 +232,7 @@ def writeToFile(results, fout, inpfile, stdflag, sound):
 		maxError = num_ulp_maxError*pow(2, -53)
 		SecondmaxError = num_ulp_SecondmaxError*pow(2, -53)
 		outIntv = [funcIntv[0]-maxError-SecondmaxError, funcIntv[1]+maxError+SecondmaxError]
-		abserror = 2*(maxError + SecondmaxError)
+		abserror = (maxError + SecondmaxError)
 
 		#print("//-------------------------------------")
 		#print("Ouput Variable -> ", outVar)
@@ -240,9 +246,9 @@ def writeToFile(results, fout, inpfile, stdflag, sound):
 		dumpStr += "\n//-------------------------------------\n"
 		dumpStr += "VAR : "+ str(outVar) + "\n"
 		dumpStr += "ABSOLUTE_ERROR : "+str(abserror)+"\n"
-		dumpStr += "First-order Error : "+str(2*maxError)+"\n"
+		dumpStr += "First-order Error : "+str(maxError)+"\n"
 		if sound:
-			dumpStr += "Higher-order Error : "+str(2*SecondmaxError)+"\n"
+			dumpStr += "Higher-order Error : "+str(SecondmaxError)+"\n"
 		dumpStr += "REAL_INTERVAL : "+str(funcIntv)+"\n"
 		dumpStr += "FP_INTERVAL : "+str(outIntv)+"\n"
 		dumpStr += "//-------------------------------------\n"
