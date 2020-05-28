@@ -189,8 +189,8 @@ def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 	if(len(PreCandidateList) <= 0):
 		return []
 	else:
-		#f = lambda x : float(x.depth)/(loc_bdmax) + 0.1
-		f = lambda x : float(x.depth)/(maxdepth) + 0.1
+		f = lambda x : float(x.depth)/((loc_bdmax) + 0.1)
+		#f = lambda x : float(x.depth)/(maxdepth) + 0.1
 		g = lambda x, y : (-1)*y*math.log(y,2)*len(x.parents)
 		cost_list = list(map( lambda x : [x.depth, g(x, f(x))], \
 		                 PreCandidateList \

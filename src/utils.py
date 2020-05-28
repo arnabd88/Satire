@@ -42,7 +42,7 @@ gelpia_epsilons = (gelpia_input_epsilon,
 gelpia_timeout = 10
 gelpia_grace = 0
 gelpia_update = 0
-gelpia_max_iters = 1000
+gelpia_max_iters = 100
 gelpia_seed = 0
 
 timeout = 10
@@ -473,7 +473,7 @@ def generate_signature(sym_expr):
 	check = Globals.hashBank.get(sig, None)
 	if check is None:
 		inputStr = extract_input_dep(list(sym_expr.free_symbols))
-		#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
+		print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
 		g1 = time.time()
 		val = invoke_gelpia(sym_expr, inputStr)
 		#print("Actual return :", val, Globals.gelpiaID)

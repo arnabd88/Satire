@@ -134,7 +134,7 @@ class TransOp(AST):
 		obj.depth = obj.children[0].depth+1
 		obj.rnd = obj.children[0].rnd
 		lexpr =  obj.simplify(lexpr)
-		#print(seng.count_ops(lexpr), obj.depth)
+		print(seng.count_ops(lexpr), obj.depth)
 		return lexpr
 		#return seng.expand(lexpr)
 
@@ -172,7 +172,7 @@ class BinOp(AST):
 
 
 		lexpr =  obj.simplify(lexpr)
-		#print(seng.count_ops(lexpr), obj.depth)
+		print(seng.count_ops(lexpr), obj.depth)
 		return lexpr
 		#return obj.simplify(lexpr)
 
