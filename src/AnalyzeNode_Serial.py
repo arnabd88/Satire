@@ -184,7 +184,10 @@ class AnalyzeNode_Serial(object):
 		if self.force:
 			pass
 		elif maxOpCount > 1000 and self.maxdepth > 10 and abs_depth > 5:
-			return {"maxOpCount" : maxOpCount, "flag" : False}
+			if self.argList.mindepth==self.argList.maxdepth:
+				pass
+			else:
+				return {"maxOpCount" : maxOpCount, "flag" : False}
 			
 		
 		if self.argList.compress:
