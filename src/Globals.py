@@ -42,3 +42,5 @@ FID=0
 ## control for gelpia expression and queue sizes
 MaxOps = 500
 MaxParSolve = 40
+
+simplify = True

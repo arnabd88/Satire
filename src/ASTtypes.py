@@ -36,6 +36,20 @@ class AST(object):
 
 	@staticmethod
 	def simplify(lexpr):
+		#if not Globals.simplify or (seng.count_ops(lexpr) > 30000):
+		#	return lexpr
+		#else:
+		#	lexpr2 = seng.expand(lexpr)
+		#	op1 = seng.count_ops(lexpr)
+		#	op2 = seng.count_ops(lexpr2)
+		#	if (op2 - op1 > 1000):
+		#		Globals.simplify = False
+		#	return lexpr2 if(seng.count_ops(lexpr2) < seng.count_ops(lexpr)) else lexpr 
+
+		##else:
+		##	lexpr2 = seng.expand(lexpr)
+
+
 		if(seng.count_ops(lexpr) > 30000):
 			return lexpr
 		else:
@@ -134,7 +148,7 @@ class TransOp(AST):
 		obj.depth = obj.children[0].depth+1
 		obj.rnd = obj.children[0].rnd
 		lexpr =  obj.simplify(lexpr)
-		print(seng.count_ops(lexpr), obj.depth)
+		#print(seng.count_ops(lexpr), obj.depth)
 		return lexpr
 		#return seng.expand(lexpr)
 
@@ -172,7 +186,7 @@ class BinOp(AST):
 
 
 		lexpr =  obj.simplify(lexpr)
-		print(seng.count_ops(lexpr), obj.depth)
+		#print(seng.count_ops(lexpr), obj.depth)
 		return lexpr
 		#return obj.simplify(lexpr)
 
