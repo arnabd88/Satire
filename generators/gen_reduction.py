@@ -51,7 +51,7 @@ def parallel_reduction_symbolic(N, fout):
 	A = ["A_{ID}".format(ID=i) for i in range(N)]
 	fout.write("INPUTS {\n\n")
 	for i in range(N):
-		fout.write("{Ai}\t fl64 : (-1.0, 1.0) ;\n".format(Ai=A[i]))
+		fout.write("{Ai}\t fl64 : (-10.0, 10.0) ;\n".format(Ai=A[i]))
 	fout.write("}\n")
 
 	fout.write("OUTPUTS {\n\n")
@@ -79,7 +79,7 @@ def serial_symbolic(N, fout):
 
 	fout.write("INPUTS {\n\n")
 	for i in range(N):
-		fout.write("{Ai}\t fl64 : (-1.0, 1.0) ;\n".format(Ai=A[i]))
+		fout.write("{Ai}\t fl64 : (-10.0, 10.0) ;\n".format(Ai=A[i]))
 	fout.write("}\n")
 
 	fout.write("OUTPUTS {\n\n")
