@@ -296,14 +296,14 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	str_expr = inputStr + str_expr
 	#print("Begining New gelpia query->ID:", Globals.gelpiaID)
 	Globals.gelpiaID += 1
-	fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
-	fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
-	fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
-	fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
-	fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
-	fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
-	fout.write(str_expr)
-	fout.close()
+	#fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
+	#fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
+	#fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
+	#fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
+	#fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
+	#fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
+	#fout.write(str_expr)
+	#fout.close()
 
 	#print(str_expr)
 	start_time = time.time()
@@ -473,7 +473,7 @@ def generate_signature(sym_expr):
 	check = Globals.hashBank.get(sig, None)
 	if check is None:
 		inputStr = extract_input_dep(list(sym_expr.free_symbols))
-		print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
+		#print("Gelpia input expr ops ->", seng.count_ops(sym_expr))
 		g1 = time.time()
 		val = invoke_gelpia(sym_expr, inputStr)
 		#print("Actual return :", val, Globals.gelpiaID)

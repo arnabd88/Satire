@@ -127,8 +127,8 @@ def simplify_with_abstraction(sel_candidate_list, argList, maxdepth, force=False
 
 	del obj
 	if final:
-		for k,v in results.items():
-			print(k.f_expression)
+		#for k,v in results.items():
+		#	print(k.f_expression)
 		return results
 
 	abstractNodes(results)
