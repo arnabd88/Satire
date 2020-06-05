@@ -1,3 +1,5 @@
+
+
 DIRS="FFT_1024\
 	lorentz20\
 	poisson2d0\
@@ -38,24 +40,50 @@ DIRS="horner\
 
 set -x
 
-if [[ -f Results.txt ]]
-then
-	echo "Removing old results file"
-	rm -rf Results.txt
+GPHOME1="/home/arnab/work/gelpia/"
+
+# use only if $GPHOME is not defined globally else use the global env value
+if [[ -z "${GPHOME}$" ]]; then
+	GPHOME=$GPHOME1
 fi
 
-for d in $DIRS
-do
-	echo $d
-	cd $d
-	echo "executing batch scipt for " $d
-	bash batch_abs.slurm
-	python3 ../collect_results.py $d
-	echo $PWD
-	cat Results.txt >> ../Results.txt
-	cd ..
-done
+GPEXE1=$GPHOME/bin/gelpia
 
-echo "Open Results.txt for summary of the evaluation"
+GPEXE2=$(eval "which gelpia")
 
+#EXE1 = $(eval "sed -i s/\/\//\//g $GPEXE1")
+#EXE2 = $(eval "sed -i s/\/\//\//g $GPEXE2")
+
+EXE1=$(eval "echo ${GPEXE1//\/\//\/}")
+EXE2=$(eval "echo ${GPEXE2//\/\//\/}")
+
+if [[ $EXE1 == $EXE2 ]];
+then
+
+#find $GPHOME -name "*generated*"
+
+	if [[ -f Results.txt ]]
+	then
+		echo "Removing old results file"
+		rm -rf Results.txt
+	fi
+	
+	for d in $DIRS
+	do
+		echo $d
+		cd $d
+		echo "executing batch scipt for " $d
+		bash batch_abs.slurm
+		python3 ../collect_results.py $d
+		echo $PWD
+		cat Results.txt >> ../Results.txt
+		echo "Cleaning up gelpia generated files"
+		find $GPHOME -name "*generated*"
+		cd ..
+	done
+	
+	echo "Open Results.txt for summary of the evaluation"
+else
+	echo "COrrectly set 'GPHOME' to gelpia home diretcory"
+fi
 exit
