@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/253411923.svg)](https://zenodo.org/badge/latestdoi/253411923)
+
 # SATIRE: Scalable Abstraction-guided Technique for Incremental Rigorous analysis of round-off Errors
 
 Satire is a first order error analysis tools for obtaining rigorous bounds on 
