@@ -60,7 +60,7 @@ The "--help" command clarifies all the supporting arguments
 
 
 #### Testing
- A runScipt is provided inside the directory `large_benchmarks`. It contains the list of all
+ A `runScipt` is provided inside the directory `large_benchmarks`. It contains the list of all
  large benchmark problems that has been tested with Satire. The `collect_results.py' script extracts the
  output information from each and aggregates into a final `Results.txt'
 
@@ -68,7 +68,7 @@ The "--help" command clarifies all the supporting arguments
 	> bash runScript.sh 
 	> gvim Results.txt 
 
- Full execution of the runScript will take few hours. Selectively, benchmarks can be commented out from runScipt as required.
+ Full execution of the `runScript` will take few hours. Selectively, benchmarks can be commented out from `runScipt` as required.
 
 #### Quick tests
  Smaller tests for both `FPtaylor` and Satire are available inside the test directory. For trying out FPtaylor tests you need to install [FPtaylor](https://github.com/soarlab/FPTaylor). Satire compatible tests are available in `tests/satern-tests/`.
