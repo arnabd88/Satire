@@ -24,5 +24,10 @@ The "--help" command clarifies all the supporting arguments
 #### Example1 (with default options)
   > python3 src/satern.py --std --file p3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
 
- The execution generates a `default.log` containing logging traces of the execution for debugging. The output is
- available in `outfile.txt`.
+ The execution generates a `default.log` containing logging traces of the execution for debugging. This file name can be modified using the `--logfile <filename1>` option.
+ 
+ The output is available in `outfile.txt`. This file name can be modified using the `--outfile <filename2>` option.
+ The `--std` option enables logging information and results to be flushed to the standard output as well.
+
+### Example2 (with abstraction option)
+  > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
