@@ -2,6 +2,8 @@
 
 Satire is a first order error analysis tools for obtaining rigorous bounds on 
 floating point round-off errors. It works on straight line floating-point programs.
+It performs path strneght reduction coupled with incremental abstraction that enables
+analysis of application with large operator counts.
 
 
 # Dependencies
@@ -31,3 +33,7 @@ The "--help" command clarifies all the supporting arguments
 
 ### Example2 (with abstraction option)
   > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
+
+  Abstraction is by default turned off. Abstraction can be enabled using the  `--enable-abstraction` switch. 
+  The default abstraction window inside Satire is set to (10,40). using `--mindepth <lower_depth>` and `--maxdepth <higher_depth>`, the lower bound
+  and the upper bound of the abstraction window can be changed as desired.
