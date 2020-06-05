@@ -14,6 +14,7 @@ source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 # Abs window : (10,20)
 python3 ../../src/satern.py \
         --std \
+		--compress \
 		--file convecdiff2d2_t32.txt \
 		--logfile convecdiff2d2_t32_abs-serial_10_20.pylog \
 		--outfile convecdiff2d2_t32_abs-serial_10_20.out \
@@ -24,6 +25,7 @@ python3 ../../src/satern.py \
 # Abs window : (15,25)
 python3 ../../src/satern.py \
         --std \
+		--compress \
 		--file convecdiff2d2_t32.txt \
 		--logfile convecdiff2d2_t32_abs-serial_15_25.pylog \
 		--outfile convecdiff2d2_t32_abs-serial_15_25.out \
@@ -34,6 +36,7 @@ python3 ../../src/satern.py \
 # Abs window : (20,40)
 python3 ../../src/satern.py \
         --std \
+		--compress \
 		--file convecdiff2d2_t32.txt \
 		--logfile convecdiff2d2_t32_abs-serial_20_40.pylog \
 		--outfile convecdiff2d2_t32_abs-serial_20_40.out \
