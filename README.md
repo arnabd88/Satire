@@ -59,7 +59,7 @@ The "--help" command clarifies all the supporting arguments
   and the upper bound of the abstraction window can be changed as desired.
 
 
-## Testing
+#### Testing
  A runScipt is provided inside the directory `large_benchmarks`. It contains the list of all
  large benchmark problems that has been tested with Satire. The `collect_results.py' script extracts the
  output information from each and aggregates into a final `Results.txt'
