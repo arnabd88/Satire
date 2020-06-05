@@ -40,7 +40,9 @@ DIRS="horner\
 
 set -x
 
-GPHOME1="/home/arnab/work/gelpia/"
+echo "Here: $GPHOME"
+GPHOME="/scratch/general/lustre/u1014840/gelpia/"
+GPHOME1="/scratch/general/lustre/u1014840/gelpia/"
 
 # use only if $GPHOME is not defined globally else use the global env value
 if [[ -z "${GPHOME}$" ]]; then
