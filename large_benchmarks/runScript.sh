@@ -45,9 +45,9 @@ DIRS="FFT_1024\
 	ccsd_type2_0\
 	ccsd_type2_1"
 
-DIRS="horner\
-	 reduction\
-	 poly-eval"
+#DIRS="horner\
+#	 reduction\
+#	 poly-eval"
 
 set -x
 
