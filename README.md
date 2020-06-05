@@ -2,8 +2,9 @@
 
 Satire is a first order error analysis tools for obtaining rigorous bounds on 
 floating point round-off errors. It works on straight line floating-point programs.
-It performs path strneght reduction coupled with incremental abstraction that enables
-analysis of application with large operator counts.
+Satire, sheds light on how scalability and bound-tightness can be attained through
+a combination of incremental analysis,  abstraction, and judicious use of concrete 
+and symbolic evaluation. 
 
 
 # Dependencies
@@ -18,7 +19,7 @@ Satire requires the following softwares to be installed.
 	* sympy
 	* gelpia
 
-## Using
+## Usage
 
 Satire is a python based framework. The main function is available is "src/satern.py"
 The "--help" command clarifies all the supporting arguments
@@ -37,3 +38,14 @@ The "--help" command clarifies all the supporting arguments
   Abstraction is by default turned off. Abstraction can be enabled using the  `--enable-abstraction` switch. 
   The default abstraction window inside Satire is set to (10,40). using `--mindepth <lower_depth>` and `--maxdepth <higher_depth>`, the lower bound
   and the upper bound of the abstraction window can be changed as desired.
+
+## Testing
+ A runScipt is provided inside the directory `large_benchmarks`. It contains the list of all
+ large benchmark problems that has been tested with Satire. The `collect_results.py' script extracts the
+ output information from each and aggregates into a final `Results.txt'
+
+ > cd large_benchmarks
+ > bash runScript.sh
+ > gvim Results.txt
+
+ Full execution of the runScript will take few hours. Selectively, benchmarks can be commented out from runScipt as required.
