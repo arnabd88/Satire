@@ -18,6 +18,11 @@ DIRS="FFT_1024\
 	matmul128\
 	FFT_1024\
 	FFT_4096pt\
+	MD\
+	chainSum\
+	poly-eval\
+	horner\
+	reduction\
 	Scan_1024\
 	Scan_4096\
 	CG_Arc\
@@ -27,9 +32,9 @@ DIRS="FFT_1024\
 	ccsd_type2_0\
 	ccsd_type2_1"
 
-#DIRS="FFT_1024\
-#	 lorentz20\
-#	 heat1d_t32"
+DIRS="horner\
+	 reduction\
+	 poly-eval"
 
 set -x
 

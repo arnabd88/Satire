@@ -3,6 +3,8 @@
 import sys
 import glob
 
+fout = open("Results.txt", 'w')
+
 configs = ['noAbs', '10_20', '15_25', '20_40']
 Message = {'noAbs' : 'Without Abstraction ', \
 		   '10_20' : 'Abstraction window (10,20) ',\
@@ -38,6 +40,7 @@ BenchmarkNames = {'poisson2d0' : 'P0', \
 
 test_name = sys.argv[1]
 print(test_name)
+fout.write(test_name+"\n")
 file_list = list(glob.iglob('*'))
 
 pylog_dict = dict()
@@ -55,9 +58,11 @@ outlog_dict['noAbs'] = list(filter(lambda x: 'out' in x and 'noAbs' in x , file_
 #print(pylog_dict)
 BenchName = BenchmarkNames.get(test_name, test_name)
 print("****** Benchmark :", BenchName, "**************")
+fout.write("****** Benchmark : {bench} **************\n".format(bench=BenchName))
 for conf in configs:
 	if (len(pylog_dict[conf]) == 0):
 		print(Message[conf], "did not execute \n")
+		fout.write("{message} -- did not execute \n".format(message=Message[conf]))
 	else:
 		pylogname = pylog_dict[conf][0]
 		outlogname = outlog_dict[conf][0]
@@ -72,3 +77,7 @@ for conf in configs:
 
 		print("\t",Message[conf], "->", "execution time :", EXECUTION_TIME[0])
 		print("\t",Message[conf], "->", "absolute error :", error)
+		fout.write("\t {message} -->  execution time = {exec_time}\n".format(message=Message[conf], exec_time=EXECUTION_TIME[0]))
+		fout.write("\t {message} -->  absolute error = {abs_err}\n".format(message=Message[conf], abs_err=error))
+
+fout.close()
