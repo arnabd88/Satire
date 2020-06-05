@@ -5,3 +5,15 @@ floating point round-off errors. It works on straight line floating-point progra
 
 
 # Dependencies
+
+Satire requires the following softwares to be installed.
+
+* Requirements:
+	* python > 3.6
+	* sly
+	* ply
+	* symengine
+	* sympy
+	* gelpia
+
+## Using
