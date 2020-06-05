@@ -64,8 +64,8 @@ The "--help" command clarifies all the supporting arguments
  large benchmark problems that has been tested with Satire. The `collect_results.py' script extracts the
  output information from each and aggregates into a final `Results.txt'
 
- > cd large_benchmarks
-   bash runScript.sh
-   gvim Results.txt
+	> cd large_benchmarks ;
+	> bash runScript.sh ;
+	> gvim Results.txt ;
 
  Full execution of the runScript will take few hours. Selectively, benchmarks can be commented out from runScipt as required.
