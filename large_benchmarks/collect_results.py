@@ -78,6 +78,7 @@ for conf in configs:
 		print("\t",Message[conf], "->", "execution time :", EXECUTION_TIME[0])
 		print("\t",Message[conf], "->", "absolute error :", error)
 		fout.write("\t {message} -->  execution time = {exec_time}\n".format(message=Message[conf], exec_time=EXECUTION_TIME[0]))
-		fout.write("\t {message} -->  absolute error = {abs_err}\n".format(message=Message[conf], abs_err=error))
+		fout.write("\t {message} -->  absolute error = {abs_err}\n\n\n".format(message=Message[conf], abs_err=error))
+
 
 fout.close()

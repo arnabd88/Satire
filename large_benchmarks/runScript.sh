@@ -38,6 +38,12 @@ DIRS="horner\
 
 set -x
 
+if [[ -f Results.txt ]]
+then
+	echo "Removing old results file"
+	rm -rf Results.txt
+fi
+
 for d in $DIRS
 do
 	echo $d
@@ -46,6 +52,10 @@ do
 	bash batch_abs.slurm
 	python3 ../collect_results.py $d
 	echo $PWD
+	cat Results.txt >> ../Results.txt
 	cd ..
 done
+
+echo "Open Results.txt for summary of the evaluation"
+
 exit
