@@ -64,6 +64,8 @@ The "--help" command clarifies all the supporting arguments
  large benchmark problems that has been tested with Satire. The `collect_results.py' script extracts the
  output information from each and aggregates into a final `Results.txt'
 
+ Please make sure to modify $GPHOME inside runScript to point to Gelpia home directory. Gelpia bin directory must also be available to the PATH variable.
+
 	> cd large_benchmarks 
 	> bash runScript.sh 
 	> gvim Results.txt 
