@@ -69,3 +69,6 @@ The "--help" command clarifies all the supporting arguments
 	> gvim Results.txt 
 
  Full execution of the runScript will take few hours. Selectively, benchmarks can be commented out from runScipt as required.
+
+#### Quick tests
+ Smaller tests for both `FPtaylor` and Satire are available inside the test directory. For trying out FPtaylor tests you need to install [FPtaylor](https://github.com/soarlab/FPTaylor). Satire compatible tests are available in `tests/satern-tests/`.
