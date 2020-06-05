@@ -1,0 +1,16 @@
+
+INPUTS {
+       x0 fl64: (-0.00001, 1.00001);
+       x1 fl64: (0, 1);
+       x2 fl64: (0, 1);
+       x3 fl64: (0, 1);
+}
+
+OUTPUTS {
+        test06_sums4_sum1;
+}
+
+EXPRS {
+      test06_sums4_sum1 rnd32= (((x0 + x1) + x2) + x3); # note rnd32=
+}
+

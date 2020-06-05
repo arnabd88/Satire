@@ -1,0 +1,59 @@
+INPUTS  { sl fl64 : (0.05, 6.283185307179586) ; sr fl64 : (0.05,6.283185307179586) ; }
+
+OUTPUTS  { x_3; }
+
+EXPRS {
+	c rnd64 = 12.34;
+	inv_1 rnd64 = 0.1 ;
+	theta rnd64 = (-1)*0.98 ;
+	t rnd64 = 0;
+	j rnd64 = 0;
+	y rnd64 = 0;
+	x rnd64 = 0;
+
+	delta_dl_1 rnd64 = (c * sl);
+	delta_dr_1 rnd64 = (c * sr);
+	delta_d_1  rnd64 = ((delta_dl_1 + delta_dr_1) * 0.5);
+	delta_theta_1 rnd64 = ((delta_dr_1 - delta_dl_1) * inv_1);
+	arg_1 rnd64 = (theta + (delta_theta_1 * 0.5));
+	cosi_1 rnd64 = ((1.0 - ((arg_1 * arg_1) * 0.5)) + ((((arg_1 * arg_1) * arg_1) * arg_1) * 0.0416666666));
+	x_1 rnd64 = (x + (delta_d_1 * cosi_1));
+	sini_1 rnd64 = ((arg_1 - (((arg_1 * arg_1) * arg_1) * 0.1666666666)) + (((((arg_1 * arg_1) * arg_1) * arg_1) * arg_1) * 0.008333333));
+	y_1 rnd64 = (y + (delta_d_1 * sini_1));
+	theta_1 rnd64 = (theta + delta_theta_1);
+	t_1 rnd64 = (t + 1.0);
+	temp_1 rnd64 = sl ;
+	sl_1 rnd64 = temp_1 ;
+	temp_2 rnd64 = sr ;
+	sr_1 rnd64 = temp_2 ;
+	temp_3 rnd64 = j + 1.0;
+	j_1 rnd64 = temp_3;
+
+	delta_dl_2 rnd64 = (c * sl_1);
+	delta_dr_2 rnd64 = (c * sr_1);
+	delta_d_2 rnd64 = ((delta_dl_2 + delta_dr_2) * 0.5);
+	delta_theta_2 rnd64 = ((delta_dr_2 - delta_dl_2) * inv_1);
+	arg_2 rnd64 = (theta_1 + (delta_theta_2 * 0.5));
+	cosi_2 rnd64 = ((1.0 - ((arg_2 * arg_2) * 0.5)) + ((((arg_2 * arg_2) * arg_2) * arg_2) * 0.0416666666));
+	x_2 rnd64 = (x_1 + (delta_d_2 * cosi_2));
+	sini_2 rnd64 = ((arg_2 - (((arg_2 * arg_2) * arg_2) * 0.1666666666)) + (((((arg_2 * arg_2) * arg_2) * arg_2) * arg_2) * 0.008333333));
+	y_2 rnd64 = (y_1 + (delta_d_2 * sini_2));
+	theta_2 rnd64 = (theta_1 + delta_theta_2);
+	t_2 rnd64 = (t_1 + 1.0);
+	temp_5 rnd64 = sl_1;
+	sl_2 rnd64 = temp_5;
+	temp_6 rnd64 = sr_1 ;
+	sr_2 rnd64 = temp_6 ;
+	temp_7 rnd64 = j_1 + 1.0 ;
+	j_2 rnd64 = temp_7 ;
+
+	delta_dl_3 rnd64 = (c * sl_2);
+	delta_dr_3 rnd64 = (c * sr_2);
+	delta_d_3 rnd64 = ((delta_dl_3 + delta_dr_3) * 0.5);
+	delta_theta_3 rnd64 = ((delta_dr_3 - delta_dl_3) * inv_1);
+	arg_3 rnd64 = (theta_1 + (delta_theta_3 * 0.5));
+	cosi_3 rnd64 = ((1.0 - ((arg_3 * arg_3) * 0.5)) + ((((arg_3 * arg_3) * arg_3) * arg_3) * 0.0416666666));
+	x_3 rnd64 = (x_2 + (delta_d_3 * cosi_3));
+	sini_3 rnd64 = ((arg_3 - (((arg_3 * arg_3) * arg_3) * 0.1666666666)) + (((((arg_3 * arg_3) * arg_3) * arg_3) * arg_3) * 0.008333333));
+	y_3 rnd64 = (y_2 + (delta_d_3 * sini_3));
+}

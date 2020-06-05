@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (-8, 8);
+}
+
+OUTPUTS {
+        logexp;
+}
+
+EXPRS {
+      logexp rnd64= log((1 + exp(x)));
+}
+

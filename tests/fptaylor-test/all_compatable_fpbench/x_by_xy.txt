@@ -1,0 +1,8 @@
+{
+Variables
+	real x in [1, 4];
+	real y in [1, 4];
+
+Expressions
+	x_by_xy rnd32= (x / (x + y));
+}

@@ -1,0 +1,11 @@
+{
+Variables
+	real x in [1001/1000, 2];
+	real y in [1001/1000, 2];
+
+Definitions
+	t rnd64= (x * y);
+
+Expressions
+	nonlin2 rnd64= ((t - 1) / ((t * t) - 1));
+}

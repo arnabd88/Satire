@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (0.01, 0.5);
+}
+
+OUTPUTS {
+        exp1x_32;
+}
+
+EXPRS {
+      exp1x_32 rnd32= ((exp(x) - 1) / x); # note rnd32rnd64=
+}
+

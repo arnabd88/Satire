@@ -1,0 +1,13 @@
+Variables
+	float64 x in [0,0.1],
+	float64 y in [1,2.5],
+	float64 z in [3.0,5.0]
+;
+
+Definitions
+	p rnd64 = (((((3*5  + (x + y*y)* z)*3.67) + (y*y)*z) + (x*x)) + (3.67*(y/z)) + (sin((x*y)/z))*cos(z*z + x) )
+;
+
+Expressions
+	p
+;

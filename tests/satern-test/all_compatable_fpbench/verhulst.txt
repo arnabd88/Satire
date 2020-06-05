@@ -1,0 +1,15 @@
+
+INPUTS {
+       x fl64: (0.1, 0.3);
+}
+
+OUTPUTS {
+        verhulst;
+}
+
+EXPRS {
+      r rnd64= 4;
+      K rnd64= 111/100;
+      verhulst rnd64= ((r * x) / (1 + (x / K)));
+}
+

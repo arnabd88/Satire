@@ -1,0 +1,13 @@
+
+INPUTS {
+       t fl64: (0, 999);
+}
+
+OUTPUTS {
+        intro_example;
+}
+
+EXPRS {
+      intro_example rnd64= (t / (t + 1));
+}
+

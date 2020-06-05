@@ -1,0 +1,9 @@
+{
+Variables
+	real v in [-9/2, -3/10];
+	real w in [2/5, 9/10];
+	real r in [19/5, 39/5];
+
+Expressions
+	turbine3 rnd64= (((3 - (2 / (r * r))) - (((1/8 * (1 + (2 * v))) * (((w * w) * r) * r)) / (1 - v))) - 1/2);
+}

@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (1.00001, 2);
+}
+
+OUTPUTS {
+        test05_nonlin1_test2;
+}
+
+EXPRS {
+      test05_nonlin1_test2 rnd64= (1 / (x + 1));
+}
+

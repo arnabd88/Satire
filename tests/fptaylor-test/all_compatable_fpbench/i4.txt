@@ -1,0 +1,8 @@
+{
+Variables
+	real x in [1/10, 10];
+	real y in [-5, 5];
+
+Expressions
+	i4 rnd32= sqrt((x + (y * y)));
+}

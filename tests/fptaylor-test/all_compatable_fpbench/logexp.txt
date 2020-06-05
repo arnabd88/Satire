@@ -1,0 +1,7 @@
+{
+Variables
+	real x in [-8, 8];
+
+Expressions
+	logexp rnd64= log((1 + exp(x)));
+}

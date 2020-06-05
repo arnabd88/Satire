@@ -1,0 +1,14 @@
+{
+Variables
+	real x in [-10, 10];
+	real r in [0, 10];
+	real lat in [-392699/250000, 392699/250000];
+	real lon in [-62831853/20000000, 62831853/20000000];
+
+Definitions
+	sinLat rnd64= sin(lat);
+	cosLon rnd64= cos(lon);
+
+Expressions
+	sphere rnd64= (x + ((r * sinLat) * cosLon));
+}

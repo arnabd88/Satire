@@ -1,0 +1,15 @@
+
+INPUTS {
+       x fl64: (0.1, 0.3);
+}
+
+OUTPUTS {
+        predatorPrey;
+}
+
+EXPRS {
+      r rnd64= 4;
+      K rnd64= 111/100;
+      predatorPrey rnd64= (((r * x) * x) / (1 + ((x / K) * (x / K))));
+}
+

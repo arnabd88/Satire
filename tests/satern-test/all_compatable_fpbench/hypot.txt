@@ -1,0 +1,14 @@
+
+INPUTS {
+       x1 fl64: (1, 100);
+       x2 fl64: (1, 100);
+}
+
+OUTPUTS {
+         hypot;
+}
+
+EXPRS {
+      hypot rnd64= sqrt(((x1 * x1) + (x2 * x2)));
+}
+

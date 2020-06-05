@@ -1,0 +1,7 @@
+{
+Variables
+	real z in [0, 999];
+
+Expressions
+	nonlin1 rnd64= (z / (z + 1));
+}

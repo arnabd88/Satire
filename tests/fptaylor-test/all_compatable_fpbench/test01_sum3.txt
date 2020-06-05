@@ -1,0 +1,14 @@
+{
+Variables
+	real x0 in [1, 2];
+	real x1 in [1, 2];
+	real x2 in [1, 2];
+
+Definitions
+	p0 rnd32= ((x0 + x1) - x2);
+	p1 rnd32= ((x1 + x2) - x0);
+	p2 rnd32= ((x2 + x0) - x1);
+
+Expressions
+	test01_sum3 rnd32= ((p0 + p1) + p2);
+}

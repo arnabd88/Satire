@@ -1,0 +1,16 @@
+
+INPUTS {
+       u fl64: (-30, 120);
+       v fl64: (320, 20300);
+       T fl64: (-50, 30);
+}
+
+OUTPUTS {
+        doppler3;
+}
+
+EXPRS {
+      t1 rnd64= (1657/5 + (3/5 * T));
+      doppler3 rnd64= ((-1*t1 * v) / ((t1 + u) * (t1 + u)));
+}
+

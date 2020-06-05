@@ -1,0 +1,32 @@
+Variables
+	float64 xr in [0,1],
+	float64 xi in [0,1],
+	float64 yr in [-1,1],
+	float64 yi in [0.005,1],
+	float64 zr in [0.707,1],
+	float64 zi in [0.707,1.414],
+	float64 ar in [-1,1],
+	float64 ai in [-1,1],
+	float64 br in [1.732,3],
+	float64 bi in [0,1],
+	float64 cr in [0.625,1.414],
+	float64 ci in [0,1]
+;
+
+Definitions
+	//xMy_real = (xr*yr - xi*yi) ;
+	//xMy_imag = (xr*yi + yr*xi) ;
+	//xMy_Pz_real = (xMy_real + zr);
+	//xMy_Pz_imag = (xMy_imag + zi);
+	//bMc_real = (br*cr - bi*ci);
+	//bMc_imag = (br*ci + cr*bi);
+	//bMc_Pa_real = (bMc_real + ar);
+	//bMc_Pa_imag = (bMc_imag + ai);
+	//xMy_pZ_M_bMc_Pa_real = (xMy_Pz_real * bMc_real - xMy_Pz_imag*bMc_Pa_imag);
+	//xMy_pZ_M_bMc_Pa_imag = (xMy_Pz_real * bMc_Pa_imag + bMc_Pa_real * xMy_Pz_imag);
+	xMy_pZ_M_bMc_Pa_real = ((xr*yr - xi*yi) + zr)*((br*cr - bi*ci) + ar) - ((xr*yi + yr*xi) + zi)*((br*ci + cr*bi) + ai);
+	xMy_pZ_M_bMc_Pa_imag = ((xr*yr - xi*yi) + zr)*((br*ci + cr*bi) + ai) + ((br*cr - bi*ci) + ar)*((xr*yi + yr*xi) + zi);
+
+Expressions
+	xMy_pZ_M_bMc_Pa_real, xMy_pZ_M_bMc_Pa_imag ;
+

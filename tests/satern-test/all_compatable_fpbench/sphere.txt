@@ -1,0 +1,18 @@
+
+INPUTS {
+       x fl64: (-10, 10);
+       r fl64: (0, 10);
+       lat fl64: (-1.570796, 1.570796);
+       lon fl64: (-3.14159265, 3.14159265);
+}
+
+OUTPUTS {
+        sphere;
+}
+
+EXPRS {
+      sinLat rnd64= sin(lat);
+      cosLon rnd64= cos(lon);
+      sphere rnd64= (x + ((r * sinLat) * cosLon));
+}
+

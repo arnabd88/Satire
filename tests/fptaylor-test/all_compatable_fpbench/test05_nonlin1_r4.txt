@@ -1,0 +1,11 @@
+{
+Variables
+	real x in [100001/100000, 2];
+
+Definitions
+	r1 rnd64= (x - 1);
+	r2 rnd64= (x * x);
+
+Expressions
+	test05_nonlin1_r4 rnd64= (r1 / (r2 - 1));
+}

@@ -1,0 +1,18 @@
+
+INPUTS {
+       x0 fl64: (1, 2);
+       x1 fl64: (1, 2);
+       x2 fl64: (1, 2);
+}
+
+OUTPUTS {
+        test01_sum3;
+}
+
+EXPRS {
+      p0 rnd32= ((x0 + x1) - x2); # note rnd32=
+      p1 rnd32= ((x1 + x2) - x0); # note rnd32=
+      p2 rnd32= ((x2 + x0) - x1); # note rnd32=
+      test01_sum3 rnd32= ((p0 + p1) + p2); # note rnd32=
+}
+

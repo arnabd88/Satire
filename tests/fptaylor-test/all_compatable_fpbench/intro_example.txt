@@ -1,0 +1,7 @@
+{
+Variables
+	real t in [0, 999];
+
+Expressions
+	intro_example rnd64= (t / (t + 1));
+}

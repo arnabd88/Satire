@@ -1,0 +1,15 @@
+
+INPUTS {
+       x fl64: (1.001, 2);
+       y fl64: (1.001, 2);
+}
+
+OUTPUTS {
+        sec4_example;
+}
+
+EXPRS {
+      t rnd64= (x * y);
+      sec4_example rnd64= ((t - 1) / ((t * t) - 1));
+}
+
