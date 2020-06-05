@@ -17,3 +17,9 @@ Satire requires the following softwares to be installed.
 	* gelpia
 
 ## Using
+
+Satire is a python based framework. The main function is available is "src/satern.py"
+The "--help" command clarifies all the supporting arguments
+
+#### Example
+  > python3 src/sater.py --std --file p3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
