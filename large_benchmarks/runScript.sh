@@ -44,7 +44,13 @@ GPHOME1="/home/arnab/work/gelpia/"
 
 # use only if $GPHOME is not defined globally else use the global env value
 if [[ -z "${GPHOME}$" ]]; then
-	GPHOME=$GPHOME1
+
+	if [[ -d $GPHOME1 ]]; then
+		GPHOME=$GPHOME1
+	else
+		echo "GPHOME1 is set to $GPHOME1 : no such directory --  Fix GPHOME path to gelpia home directory"
+	fi
+
 fi
 
 GPEXE1=$GPHOME/bin/gelpia
