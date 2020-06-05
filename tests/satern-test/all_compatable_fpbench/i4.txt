@@ -1,0 +1,14 @@
+
+INPUTS {
+       x fl64: (0.1, 10);
+       y fl64: (-5, 5);
+}
+
+OUTPUTS {
+        i4;
+}
+
+EXPRS {
+      i4 rnd32= sqrt((x + (y * y))); # note rnd32=
+}
+

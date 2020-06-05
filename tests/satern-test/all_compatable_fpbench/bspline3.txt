@@ -1,0 +1,13 @@
+
+INPUTS {
+       u fl64: (0, 1);
+}
+
+OUTPUTS {
+        bspline3;
+}
+
+EXPRS {
+      bspline3 rnd64= (-1*((u * u) * u) / 6);
+}
+

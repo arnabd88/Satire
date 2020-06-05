@@ -1,0 +1,154 @@
+## minres
+
+INPUTS {
+	b00 fl64 : (80 - 0.25,80 + 0.25) ;
+	b01 fl64 : (60 - 0.25,60 + 0.25) ;
+	b02 fl64 : (40 - 0.25,40 + 0.25) ;
+	b03 fl64 : (70 - 0.25,70 + 0.25) ;
+	#b00 fl64 : (80 ,80 ) ;
+	#b01 fl64 : (60 ,60 ) ;
+	#b02 fl64 : (40 ,40 ) ;
+	#b03 fl64 : (70 ,70 ) ;
+	#
+	x00 fl64 : (0,0) ;
+	x01 fl64 : (0,0) ;
+	x02 fl64 : (0,0) ;
+	x03 fl64 : (0,0) ;
+	#
+	A00 fl64 : (50  - 0.25, 50  + 0.25 ) ;
+	A01 fl64 : (-60 - 0.25, -60 + 0.25 ) ;
+	A02 fl64 : (70  - 0.25, 70  + 0.25 ) ;
+	A03 fl64 : (-80 - 0.25, -80 + 0.25 ) ;
+	A10 fl64 : (-60 - 0.25, -60 + 0.25 ) ;
+	A11 fl64 : (-60 - 0.25, -60 + 0.25 ) ;
+	A12 fl64 : (40  - 0.25, 40  + 0.25 ) ;
+	A13 fl64 : (70  - 0.25, 70  + 0.25 ) ;
+	A20 fl64 : (70  - 0.25, 70  + 0.25 ) ;
+	A21 fl64 : (40  - 0.25, 40  + 0.25 ) ;
+	A22 fl64 : (40  - 0.25, 40  + 0.25 ) ;
+	A23 fl64 : (-30 - 0.25, -30 + 0.25 ) ;
+	A30 fl64 : (-80 - 0.25, -80 + 0.25 ) ;
+	A31 fl64 : (70  - 0.25, 70  + 0.25 ) ;
+	A32 fl64 : (-30 - 0.25, -30 + 0.25 ) ;
+	A33 fl64 : (-40 - 0.25, -40 + 0.25 ) ;
+	#A00 fl64 : (50  , 50   ) ;
+	#A01 fl64 : (-60 , -60  ) ;
+	#A02 fl64 : (70  , 70   ) ;
+	#A03 fl64 : (-80 , -80  ) ;
+	#A10 fl64 : (-60 , -60  ) ;
+	#A11 fl64 : (-60 , -60  ) ;
+	#A12 fl64 : (40  , 40   ) ;
+	#A13 fl64 : (70  , 70   ) ;
+	#A20 fl64 : (70  , 70   ) ;
+	#A21 fl64 : (40  , 40   ) ;
+	#A22 fl64 : (40  , 40   ) ;
+	#A23 fl64 : (-30 , -30  ) ;
+	#A30 fl64 : (-80 , -80  ) ;
+	#A31 fl64 : (70  , 70   ) ;
+	#A32 fl64 : (-30 , -30  ) ;
+	#A33 fl64 : (-40 , -40  ) ;
+
+}
+
+OUTPUTS {
+	#alpha ;
+	#beta_1 ;
+	#v113 ;
+	#a13 ;
+	#alpha10 ;
+	#alpha1 ;
+	#beta_2 ;
+	#v223 ;
+	#a23 ;
+	alpha2 ;
+}
+
+EXPRS {
+
+	sig0 rnd64 = 0;
+	sig1 rnd64 = 0;
+	gam0 rnd64 = 0;
+	gam1 rnd64 = 0;
+	delta rnd64 = 1.1102230246251565e-16;
+
+	v10 rnd64 = b00 - (A00 * x00 + A01 * x01 + A02 * x02 + A03 * x03) ;
+	v11 rnd64 = b01 - (A10 * x00 + A11 * x01 + A12 * x02 + A13 * x03) ;
+	v12 rnd64 = b02 - (A20 * x00 + A21 * x01 + A22 * x02 + A23 * x03) ;
+	v13 rnd64 = b03 - (A30 * x00 + A31 * x01 + A32 * x02 + A33 * x03) ;
+
+	beta_1 rnd64 = sqrt(v10*v10 + v11*v11 + v12*v12 + v13*v13) ;
+	eta_1 rnd64 = sqrt(v10*v10 + v11*v11 + v12*v12 + v13*v13) ;
+
+	v110 rnd64 = v10/beta_1 ;
+	v111 rnd64 = v11/beta_1 ;
+	v112 rnd64 = v12/beta_1 ;
+	v113 rnd64 = v13/beta_1 ;
+
+	a10 rnd64 = A00*v110 + A01*v111 + A02*v112 + A03*v113 ;
+	a11 rnd64 = A10*v110 + A11*v111 + A12*v112 + A13*v113 ;
+	a12 rnd64 = A20*v110 + A21*v111 + A22*v112 + A23*v113 ;
+	a13 rnd64 = A30*v110 + A31*v111 + A32*v112 + A33*v113 ;
+
+	alpha10 rnd64 = v110*a10 ;
+	alpha11 rnd64 = v111*a11 ;
+	alpha12 rnd64 = v112*a12 ;
+	alpha13 rnd64 = v113*a13 ;
+	
+
+	alpha1 rnd64 = alpha10 + alpha11 + alpha12 + alpha13 ;
+
+	alphaV_10 rnd64 = alpha1*v110 ;
+	alphaV_11 rnd64 = alpha1*v111 ;
+	alphaV_12 rnd64 = alpha1*v112 ;
+	alphaV_13 rnd64 = alpha1*v113 ;
+
+	betaV_00 rnd64 = beta_1 * 0 ;
+	betaV_01 rnd64 = beta_1 * 0 ;
+	betaV_02 rnd64 = beta_1 * 0 ;
+	betaV_03 rnd64 = beta_1 * 0 ;
+
+	###########################################
+
+	v20 rnd64 = a10 - alphaV_10 - betaV_00 ;
+	v21 rnd64 = a11 - alphaV_11 - betaV_01 ;
+	v22 rnd64 = a12 - alphaV_12 - betaV_02 ;
+	v23 rnd64 = a13 - alphaV_13 - betaV_03 ;
+
+	beta_2 rnd64 = sqrt(v20*v20 + v21*v21 + v22*v22 + v23*v23);
+
+	delta1 rnd64 = gam1*alpha1 - gam0*sig1*beta_1 ;
+
+	rho11 rnd64 = sqrt(delta1*delta1 + beta_2*beta_2);
+	rho12 rnd64 = sig1 * alpha1 + gam0*gam1*beta_1 ;
+	rho13 rnd64 = sig0 * beta_1 ;
+	gam2 rnd64 = delta1/rho11 ;
+	sig2 rnd64 = beta_1 / rho11 ;
+	w10 rnd64 = v110/rho11 ;
+	w11 rnd64 = v111/rho11 ;
+	w12 rnd64 = v112/rho11 ;
+	w13 rnd64 = v113/rho11 ;
+
+	x10 rnd64 = x00 + gam2*eta_1*w10 ;
+	x11 rnd64 = x01 + gam2*eta_1*w11 ;
+	x12 rnd64 = x02 + gam2*eta_1*w12 ;
+	x13 rnd64 = x03 + gam2*eta_1*w13 ;
+	eta_2 rnd64 = -1*sig2 * eta_1 ;
+
+	v220 rnd64 = v20/beta_2 ;
+	v221 rnd64 = v21/beta_2 ;
+	v222 rnd64 = v22/beta_2 ;
+	v223 rnd64 = v23/beta_2 ;
+
+	a20 rnd64 = A00*v220 + A01*v221 + A02*v222 + A03*v223 ;
+	a21 rnd64 = A10*v220 + A11*v221 + A12*v222 + A13*v223 ;
+	a22 rnd64 = A20*v220 + A21*v221 + A22*v222 + A23*v223 ;
+	a23 rnd64 = A30*v220 + A31*v221 + A32*v222 + A33*v223 ;
+
+	alpha20 rnd64 = v220*a20 ;
+	alpha21 rnd64 = v221*a21 ;
+	alpha22 rnd64 = v222*a22 ;
+	alpha23 rnd64 = v223*a23 ;
+	
+
+	alpha2 rnd64 = alpha20 + alpha21 + alpha22 + alpha23 ;
+}

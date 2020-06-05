@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (0.01, 0.5);
+}
+
+OUTPUTS {
+        exp1x_log;
+}
+
+EXPRS {
+      exp1x_log rnd64= ((exp(x) - 1) / log(exp(x)));
+}
+

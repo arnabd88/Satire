@@ -1,0 +1,15 @@
+
+INPUTS {
+       x fl64: (1.001, 2);
+       y fl64: (1.001, 2);
+}
+
+OUTPUTS {
+        nonlin2;
+}
+
+EXPRS {
+      t rnd64= (x * y);
+      nonlin2 rnd64= ((t - 1) / ((t * t) - 1));
+}
+

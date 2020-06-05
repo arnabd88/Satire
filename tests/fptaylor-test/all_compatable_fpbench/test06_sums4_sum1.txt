@@ -1,0 +1,10 @@
+{
+Variables
+	real x0 in [-1/100000, 100001/100000];
+	real x1 in [0, 1];
+	real x2 in [0, 1];
+	real x3 in [0, 1];
+
+Expressions
+	test06_sums4_sum1 rnd32= (((x0 + x1) + x2) + x3);
+}

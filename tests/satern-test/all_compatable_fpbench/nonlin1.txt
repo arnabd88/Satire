@@ -1,0 +1,13 @@
+
+INPUTS {
+       z fl64: (0, 999);
+}
+
+OUTPUTS {
+        nonlin1;
+}
+
+EXPRS {
+      nonlin1 rnd64= (z / (z + 1));
+}
+

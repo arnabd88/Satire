@@ -1,0 +1,19 @@
+{
+Variables
+	real lat1 in [0, 2/5];
+	real lat2 in [1/2, 1];
+	real lon1 in [0, 62831853/20000000];
+	real lon2 in [-62831853/20000000, -1/2];
+
+Definitions
+	dLon rnd64= (lon2 - lon1);
+	s_lat1 rnd64= sin(lat1);
+	c_lat1 rnd64= cos(lat1);
+	s_lat2 rnd64= sin(lat2);
+	c_lat2 rnd64= cos(lat2);
+	s_dLon rnd64= sin(dLon);
+	c_dLon rnd64= cos(dLon);
+
+Expressions
+	azimuth rnd64= atan(((c_lat2 * s_dLon) / ((c_lat1 * s_lat2) - ((s_lat1 * c_lat2) * c_dLon))));
+}

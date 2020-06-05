@@ -1,0 +1,11 @@
+{
+Variables
+	real x in [1/10, 3/10];
+
+Definitions
+	r rnd64= 4;
+	K rnd64= 111/100;
+
+Expressions
+	predatorPrey rnd64= (((r * x) * x) / (1 + ((x / K) * (x / K))));
+}

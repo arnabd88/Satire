@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (0, 1);
+}
+
+OUTPUTS {
+        sqroot;
+}
+
+EXPRS {
+      sqroot rnd64= ((((1 + (1/2 * x)) - ((1/8 * x) * x)) + (((1/16 * x) * x) * x)) - ((((5/128 * x) * x) * x) * x));
+}
+

@@ -1,0 +1,7 @@
+{
+Variables
+	real u in [0, 1];
+
+Expressions
+	bspline3 rnd64= (-((u * u) * u) / 6);
+}

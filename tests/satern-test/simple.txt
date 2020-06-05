@@ -1,0 +1,11 @@
+INPUTS  { x fl64 :(0,0.1) ; y fl32 :(1,2.5); z fl16 :(3,5); }
+
+OUTPUTS  { O1; O2; O3; O4;}
+
+EXPRS  {
+			e1 rnd64 = 3*5  + (x + y*y)* z ;
+			O1 rnd64 = 3.67 * e1 + (y*y)*z ;
+			O2 rnd32 = x*x + 3.67*(y/z) ;
+			O3 rnd16 = x*x + (sin((x*y)/z))*cos(z*z + x) ;
+			O4 rnd64 = x*x + y ;
+		}

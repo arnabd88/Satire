@@ -1,0 +1,14 @@
+
+INPUTS {
+       x fl64: (1, 4);
+       y fl64: (1, 4);
+}
+
+OUTPUTS {
+        x_by_xy;
+}
+
+EXPRS {
+      x_by_xy rnd32= (x / (x + y)); # note rnd32=
+}
+

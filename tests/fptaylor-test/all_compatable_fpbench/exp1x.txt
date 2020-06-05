@@ -1,0 +1,7 @@
+{
+Variables
+	real x in [1/100, 1/2];
+
+Expressions
+	exp1x rnd64= ((exp(x) - 1) / x);
+}

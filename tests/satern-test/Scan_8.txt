@@ -1,0 +1,38 @@
+INPUTS {
+x_0  fl64 	: 	(0,1) ;
+x_1  fl64 	: 	(0,1) ;
+x_2  fl64 	: 	(0,1) ;
+x_3  fl64 	: 	(0,1) ;
+x_4  fl64 	: 	(0,1) ;
+x_5  fl64 	: 	(0,1) ;
+x_6  fl64 	: 	(0,1) ;
+x_7  fl64 	: 	(0,1) ;
+}
+
+
+OUTPUTS {
+#x_0;
+#X_UP_1_0P1;
+#X_DW_2_1P1;
+#X_UP_2_1P2;
+#X_DW_2_3P1;
+#X_DW_3_3P2;
+X_DW_2_5P1;
+#X_UP_3_3P4;
+}
+
+EXPRS {
+X_UP_1_0P1 rnd64 = (x_1 + x_0);
+X_UP_1_2P1 rnd64 = (x_3 + x_2);
+X_UP_1_4P1 rnd64 = (x_5 + x_4);
+X_UP_1_6P1 rnd64 = (x_7 + x_6);
+X_UP_2_1P2 rnd64 = (X_UP_1_2P1 + X_UP_1_0P1);
+X_UP_2_5P2 rnd64 = (X_UP_1_6P1 + X_UP_1_4P1);
+X_UP_3_3P4 rnd64 = (X_UP_2_5P2 + X_UP_2_1P2);
+X_DW_3_3P2 rnd64 = (X_UP_1_4P1 + X_UP_2_1P2);
+X_DW_2_1P1 rnd64 = (x_2 + X_UP_1_0P1);
+X_DW_2_3P1 rnd64 = (x_4 + X_UP_2_1P2);
+X_DW_2_5P1 rnd64 = (x_6 + X_DW_3_3P2);
+}
+
+

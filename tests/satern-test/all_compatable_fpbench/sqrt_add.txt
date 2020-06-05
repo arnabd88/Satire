@@ -1,0 +1,13 @@
+
+INPUTS {
+       x fl64: (1, 1000);
+}
+
+OUTPUTS {
+        sqrt_add;
+}
+
+EXPRS {
+      sqrt_add rnd64= (1 / (sqrt((x + 1)) + sqrt(x)));
+}
+

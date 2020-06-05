@@ -1,0 +1,16 @@
+
+INPUTS {
+       a fl64: (9, 9);
+       b fl64: (4.71, 4.89);
+       c fl64: (4.71, 4.89);
+}
+
+OUTPUTS {
+        triangle;
+}
+
+EXPRS {
+      s rnd64= (((a + b) + c) / 2);
+      triangle rnd64= sqrt((((s * (s - a)) * (s - b)) * (s - c)));
+}
+
