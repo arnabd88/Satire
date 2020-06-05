@@ -45,14 +45,14 @@ DIRS="FFT_1024\
 	ccsd_type2_0\
 	ccsd_type2_1"
 
-#DIRS="horner\
-#	 reduction\
-#	 poly-eval"
+DIRS="horner\
+	 reduction\
+	 poly-eval"
 
 set -x
 
 echo "Here: $GPHOME"
-GPHOME="/scratch/general/lustre/u1014840/gelpia/"
+#GPHOME="/scratch/general/lustre/u1014840/gelpia/"
 GPHOME1="/scratch/general/lustre/u1014840/gelpia/"
 
 # use only if $GPHOME is not defined globally else use the global env value
@@ -63,7 +63,16 @@ if [[ -z "${GPHOME}$" ]]; then
 	else
 		echo "GPHOME1 is set to $GPHOME1 : no such directory --  Fix GPHOME path to gelpia home directory"
 	fi
-
+else if [[ -d "${GPHOME}$" ]]; then
+		echo "$GPHOME is a valid directory"
+	 else
+		if [[ -d $GPHOME1 ]]; then
+			GPHOME=$GPHOME1
+		else
+			echo "GPHOME1 is set to $GPHOME1 : no such directory --  Fix GPHOME path to gelpia home directory"
+		fi
+	 	
+	 fi
 fi
 
 GPEXE1=$GPHOME/bin/gelpia
