@@ -84,7 +84,7 @@ then
 		echo $PWD
 		cat Results.txt >> ../Results.txt
 		echo "Cleaning up gelpia generated files"
-		find $GPHOME -name "*generated*"
+		find $GPHOME -name "*generated*" | xargs rm -rf
 		cd ..
 	done
 	
