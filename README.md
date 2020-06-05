@@ -32,12 +32,32 @@ The "--help" command clarifies all the supporting arguments
  The output is available in `outfile.txt`. This file name can be modified using the `--outfile <filename2>` option.
  The `--std` option enables logging information and results to be flushed to the standard output as well.
 
+ The contents of the `outfile.txt` summarizes the execution time, analysis time and absolute error bounds for the specific benchmark
+
+	INPUT_FILE : Reduction_1024.txt
+	
+	//-------------------------------------
+	VAR : A_9_0
+	ABSOLUTE_ERROR : 5.684341886080801e-13
+	First-order Error : 5.684341886080801e-13
+	REAL_INTERVAL : [-1024, 1024.0]
+	FP_INTERVAL : [-1024.0000000000005, 1024.0000000000005]
+	//-------------------------------------
+	
+	Optimizer Calls: 5
+	Parsing time : 0.10396647453308105
+	PreProcessing time : 0.0016448497772216797
+	Analysis time : 33.121673822402954
+	Full time : 33.23301911354065
+
+
 ### Example2 (with abstraction option)
   > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
 
   Abstraction is by default turned off. Abstraction can be enabled using the  `--enable-abstraction` switch. 
   The default abstraction window inside Satire is set to (10,40). using `--mindepth <lower_depth>` and `--maxdepth <higher_depth>`, the lower bound
   and the upper bound of the abstraction window can be changed as desired.
+
 
 ## Testing
  A runScipt is provided inside the directory `large_benchmarks`. It contains the list of all
