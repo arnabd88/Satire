@@ -13,11 +13,11 @@ Satire requires the following softwares to be installed.
 
 * Requirements:
 	* python > 3.6
-	* sly
-	* ply
-	* symengine
-	* sympy
-	* gelpia
+	* [sly](https://github.com/dabeaz/sly)
+	* [ply](https://github.com/dabeaz/ply)
+	* [symengine] (https://github.com/symengine/symengine)
+	* [sympy] (https://www.sympy.org/en/index.html)
+	* [gelpia] (https://github.com/soarlab/gelpia)
 
 ## Usage
 
