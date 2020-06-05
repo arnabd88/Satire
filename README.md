@@ -51,7 +51,7 @@ The "--help" command clarifies all the supporting arguments
 	Full time : 33.23301911354065
 
 
-### Example2 (with abstraction option)
+#### Example2 (with abstraction option)
   > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
 
   Abstraction is by default turned off. Abstraction can be enabled using the  `--enable-abstraction` switch. 
@@ -65,7 +65,7 @@ The "--help" command clarifies all the supporting arguments
  output information from each and aggregates into a final `Results.txt'
 
  > cd large_benchmarks
-  bash runScript.sh
-  gvim Results.txt
+   bash runScript.sh
+   gvim Results.txt
 
  Full execution of the runScript will take few hours. Selectively, benchmarks can be commented out from runScipt as required.
