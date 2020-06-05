@@ -21,5 +21,8 @@ Satire requires the following softwares to be installed.
 Satire is a python based framework. The main function is available is "src/satern.py"
 The "--help" command clarifies all the supporting arguments
 
-#### Example
-  > python3 src/sater.py --std --file p3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
+#### Example1 (with default options)
+  > python3 src/satern.py --std --file p3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
+
+ The execution generates a `default.log` containing logging traces of the execution for debugging. The output is
+ available in `outfile.txt`.
