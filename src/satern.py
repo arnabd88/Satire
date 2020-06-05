@@ -31,8 +31,8 @@ def parseArguments():
 									  default=20, type=int)
 	parser.add_argument('--maxdepth', help='Max depth for abstraction. Limiting to 40', \
 									  default=40, type=int)
-	parser.add_argument('--fixdepth', help='Fix the abstraction depth. Default is -1(disabled)', \
-									  default=-1, type=int)
+	#parser.add_argument('--fixdepth', help='Fix the abstraction depth. Default is -1(disabled)', \
+	#								  default=-1, type=int)
 	#parser.add_argument('--alg', help='Heuristic level for abstraction(default 0), \
 	#									0 -> Optimal depth within mindepth and maxdepth(may loose correlation), \
 	#									1 -> User defined fixed depth, \
