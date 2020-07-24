@@ -27,7 +27,7 @@ Satire is a python based framework. The main function is available is "src/sater
 The "--help" command clarifies all the supporting arguments
 
 #### Example1 (with default options)
-  > python3 src/satern.py --std --file p3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
+  > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
 
  The execution generates a `default.log` containing logging traces of the execution for debugging. This file name can be modified using the `--logfile <filename1>` option.
  
