@@ -44,6 +44,24 @@ T execute_spec_precision()
 
 }
 
+
+
+
+//   t  = (((3 * x1) * x1) + (2 * x2) - x1);
+//   t' = ((((3 * x1) * x1) - (2 * x2)) - x1);
+//   d  = ((x1 * x1) + 1);
+//   s  = (t / d);
+//   s' = (t' / d);
+//   r1 = ((2 * x1) * s) * (s-3);
+//   r2 = (x1 * x1) * ((4 * s) - 6);
+//   r3 = ((3 * x1) * x1) * s ;
+//   r4 = ((x1 * x1) * x1) ;
+//
+//   return (x1 + ((((((r1 + r2) * d) + r3) + r4) + x1) + (3 * s'))) 
+   
+
+
+
 template<class T>
 T execute_error_expression()
 {
