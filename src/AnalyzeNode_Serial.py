@@ -52,6 +52,7 @@ class AnalyzeNode_Serial(object):
 
 	def __setup_outputs__(self):
 		for node in self.trimList:
+			print("setup outputs:", node.rnd)
 			self.bwdDeriv[node] = {node : 1}
 			self.parentTracker[node] = len(self.parent_dict[node])
 
@@ -87,6 +88,14 @@ class AnalyzeNode_Serial(object):
 	def visit_node_deriv(self, node):
 		outList = self.bwdDeriv[node].keys()
 		opList = [child.f_expression for child in node.children]
+		####
+		for out in outList:
+			print("Debug-deriv:", type(node).__name__)
+			print("Node expr:", node.f_expression)
+			print("Rounding:", node.get_rounding())
+			print("Deriv: ", self.bwdDeriv[node][out])
+			print("---------\n\n")
+		####
 		if(len(node.children) > 0):
 			DerivFunc = ops._DFOPS[node.token.type]
 			for i, child_node in enumerate(node.children):
@@ -94,8 +103,8 @@ class AnalyzeNode_Serial(object):
 					self.bwdDeriv[child_node] = self.bwdDeriv.get(child_node, {})
 					self.bwdDeriv[child_node][outVar] = self.bwdDeriv[child_node].get(outVar, 0) +\
 					                       self.bwdDeriv[node][outVar] * \
-										   (0 if utils.isConst(child_node) else \
-										   DerivFunc[i](opList))
+										   DerivFunc[i](opList)
+										   #(0.1 if utils.isConst(child_node) else  DerivFunc[i](opList))
 					self.next_workList.append(child_node)
 				##------
 				self.parentTracker[child_node] += 1
@@ -110,7 +119,14 @@ class AnalyzeNode_Serial(object):
 			curr_depth = node.depth
 			next_depth = curr_depth - 1
 			if (utils.isConst(node) or self.completed[node.depth].__contains__(node) ):
-			    pass
+				####
+				for out in self.bwdDeriv[node].keys():
+					print("Debug-deriv:", type(node).__name__)
+					print("Node expr:", node.f_expression)
+					print("Deriv: ", self.bwdDeriv[node][out])
+					print("---------\n\n")
+				####
+				pass
 			elif (self.converge_parents(node)):
 			    self.visit_node_deriv(node)
 			else:
@@ -128,15 +144,18 @@ class AnalyzeNode_Serial(object):
 		#print([n.f_expression for n in node.parents])
 		#print(node.parents)
 		#print(self.parent_dict[node])
+		#print("--------------------------------------")
+		#print("Rounding: node-expr:", node.f_expression)
+		#print("Rounding:", node.get_rounding())
 		for outVar in self.bwdDeriv[node].keys():
 			expr_solve = (((\
 			                (self.bwdDeriv[node][outVar]))*\
-							(node.get_noise(node))*node.get_rounding())\
+							(node.get_noise(node))*max(node.get_rounding(),outVar.get_rounding()))\
 							).__abs__()
 
 			if seng.count_ops(self.Accumulator[outVar]) > 4000:
 				intv = max(utils.generate_signature(self.Accumulator[outVar]))
-				self.Accumulator[outVar] = expr_solve
+				self.Accumulator[outVar] = seng.expand(expr_solve)
 				expr_solve = intv
 			elif seng.count_ops( expr_solve ) > 1000:
 				expr_solve = max(utils.generate_signature(expr_solve))
@@ -161,6 +180,9 @@ class AnalyzeNode_Serial(object):
 
 		for node in self.Accumulator.keys():
 			errIntv = utils.generate_signature(self.Accumulator[node])
+			print("----------- Dump the error expression for plotting ---------- ")
+			print(self.Accumulator[node])
+			print("// end dump ")
 			err = max([abs(i) for i in errIntv])
 			fintv = utils.generate_signature(node.f_expression)
 			self.results[node] = { "ERR" : err, \

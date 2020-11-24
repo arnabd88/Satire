@@ -46,11 +46,11 @@ _DFOPS = { PLUS  : [lambda L : 1, lambda L : 1],\
 ## difficult to do it optimally
 ## specially whendealing with intervals
 
-_ALLOC_ULP = { PLUS  : 0.5, \
-			   MINUS : 0.5, \
-			   MUL   : 0.5, \
-			   DIV   : 0.5, \
-			   SQRT  : 0.5, \
+_ALLOC_ULP = { PLUS  : 1, \
+			   MINUS : 1, \
+			   MUL   : 1, \
+			   DIV   : 1, \
+			   SQRT  : 1, \
 			   SIN	 : 1, \
 			   COS	 : 1, \
 			   TAN	 : 1, \

@@ -33,16 +33,16 @@ logging.set_log_filename(None)
 gelpia.setup_requirements(gelpia.GIT_DIR)
 gelpia_rust_executable = gelpia.setup_rust_env(gelpia.GIT_DIR, False)
 
-gelpia_input_epsilon = 1e-2
-gelpia_output_epsilon = 1e-2
-gelpia_output_epsilon_relative = 1e-2
+gelpia_input_epsilon = 1e-6
+gelpia_output_epsilon = 1e-6
+gelpia_output_epsilon_relative = 1e-6
 gelpia_epsilons = (gelpia_input_epsilon,
                    gelpia_output_epsilon,
                    gelpia_output_epsilon_relative)
 gelpia_timeout = 10
 gelpia_grace = 0
 gelpia_update = 0
-gelpia_max_iters = 2000
+gelpia_max_iters = 20000
 gelpia_seed = 0
 
 timeout = 10
@@ -296,14 +296,14 @@ def invoke_gelpia(symExpr, inputStr, label="Func-> Dur:"):
 	str_expr = inputStr + str_expr
 	#print("Begining New gelpia query->ID:", Globals.gelpiaID)
 	Globals.gelpiaID += 1
-	#fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
-	#fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
-	#fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
-	#fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
-	#fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
-	#fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
-	#fout.write(str_expr)
-	#fout.close()
+	fout = open("gelpia_"+str(Globals.gelpiaID)+".txt", "w")
+	fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
+	fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
+	fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
+	fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
+	fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
+	fout.write(str_expr)
+	fout.close()
 
 	#print(str_expr)
 	start_time = time.time()
