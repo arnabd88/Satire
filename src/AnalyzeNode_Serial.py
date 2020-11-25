@@ -150,7 +150,7 @@ class AnalyzeNode_Serial(object):
 		for outVar in self.bwdDeriv[node].keys():
 			expr_solve = (((\
 			                (self.bwdDeriv[node][outVar]))*\
-							(node.get_noise(node))*max(node.get_rounding(),outVar.get_rounding()))\
+							(node.get_noise(node))*(max(node.get_rounding(),outVar.get_rounding()) if node.rnd!=0.0 else node.get_rounding()  ))\
 							).__abs__()
 
 			if seng.count_ops(self.Accumulator[outVar]) > 4000:
