@@ -3,6 +3,8 @@ from gtokens import *
 #import sympy as sym
 import symengine as seng
 from sly import Lexer
+import numpy as np
+import bigfloat as bf
 
 class Slex(Lexer):
 
@@ -70,7 +72,9 @@ class Slex(Lexer):
 	@_(r'[\-]?\d+\.\d+([eE][-+]?\d+)?')
 	#@_(r'[+-]?[0-9]+\.[0-9]+')
 	def FLOAT(self, t):
-		t.value = float(t.value)
+		#t.value = float(t.value)
+		#t.value = np.float128(t.value)
+		t.value = bf.BigFloat(t.value, bf.precision(128))
 		#t.value = t.value
 		#print("value -> ", t.value)
 		return t

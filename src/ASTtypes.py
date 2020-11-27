@@ -78,14 +78,14 @@ class Num(AST):
 	
 	@staticmethod
 	def eval(obj):
-		return obj.token.value
+		return float(obj.token.value)
 
 	@staticmethod
 	def get_noise(obj):
-		if (obj.token.value).is_integer:
+		if float(obj.token.value).is_integer and float(obj.token.value) == obj.token.value:
 			return 0
 
-		if bf.sub(bf.BigFloat(obj.token.value, precision(113)),bf.BigFloat(obj.token.value, precision(52)),precision(1024)) == 0:
+		if bf.sub(bf.BigFloat(obj.token.value, bf.precision(113)),bf.BigFloat(obj.token.value, bf.precision(50)), bf.precision(1024)) == 0:
 			return 0
 		v = math.log(abs(obj.token.value),2)
 		if (v - math.floor(v) != 0.0):
