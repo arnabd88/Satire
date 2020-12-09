@@ -114,15 +114,37 @@ def invoke_gelpia(sexpr_inpstr_tuple):
 ## Group queries by common hashsig
 ## only send unique queries per hashsig
 
+## The below code works for python3.6.9 but fails for higher versions
+# class NoDaemonicProcess(multiprocessing.Process):
+# 	def _get_daemon(self):
+# 		return False
+# 	def _set_daemon(self, value):
+# 		pass
+# 	daemon = property(_get_daemon, _set_daemon)
+# 
+# class MyPool(multiprocessing.pool.Pool):
+#     Process = NoDaemonicProcess
+##--
+
 class NoDaemonicProcess(multiprocessing.Process):
-	def _get_daemon(self):
+	@property
+	def daemon(self):
 		return False
-	def _set_daemon(self, value):
+
+	@daemon.setter
+	def daemon(self, value):
 		pass
-	daemon = property(_get_daemon, _set_daemon)
+
+class NoDaemonContext(type(multiprocessing.get_context())):
+	Process = NoDaemonicProcess
 
 class MyPool(multiprocessing.pool.Pool):
-    Process = NoDaemonicProcess
+	def __init__(self, *args, **kwargs):
+		kwargs['context'] = NoDaemonContext()
+		super(MyPool, self).__init__(*args, **kwargs)
+
+
+
 
 def error_query_reduction( QworkList, reduction=True ):
 
