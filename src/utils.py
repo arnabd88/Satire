@@ -156,7 +156,7 @@ def error_query_reduction( QworkList, reduction=True ):
 
 	#intv_QS = tuple(map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
 
-	pool = MyPool(8)
+	pool = MyPool()
 	intv_QS = tuple(pool.map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
 	pool.close()
 	pool.join()
