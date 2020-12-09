@@ -147,7 +147,9 @@ class Sparser(object):
 		else:
 			node = Var(token)
 			self.consume(ID)
+			print("Before var check:", type(node), node.rnd, token.value)
 			node = self.CheckSymTable(node, token)
+			print("After var check:", type(node), node.rnd)
 			node.name = seng.var(token.value)
 			return node
 
@@ -187,9 +189,12 @@ class Sparser(object):
 			node = self.expr()
 			node.set_rounding(rnd)
 			node_exists = Globals.symTable.get(nameToken.value, None)
+			#print("Nodeexists check:", node_exists, nameToken.value, node.rnd)
 			if node_exists is not None:
 				self.error()
 			Globals.symTable[nameToken.value] = node
+			#print("Last check here:", node.rnd)
+			#print("Just checking:", node.rnd)
 
 			#node_exists = Globals.csetbl.get(node.f_expression, None)
 			#if node_exists is None:
@@ -321,7 +326,11 @@ class Sparser(object):
 			# create the input symbols here
 			# and update the csetbl for symbol lookup to be used later
 			symVar = FreeVar(var_token)
+			#symVar.set_noise(symVar, (max(abs(left),abs(right)), 0.0))
+			symVar.set_noise(symVar, (var_token.value, 0.0))
 			symVar.set_rounding(fptype)
+			#print("FPTYPE:", fptype)
+			#print("set-rounding:", symVar.rnd)
 			#symVar.set_expression(symVar, symVar.eval(symVar))
 			#Globals.csetbl[symVar.f_expression] = Globals.csetbl.get(symVar.f_expression, symVar)
 			#if(left==right):
@@ -365,6 +374,9 @@ if __name__ == "__main__":
 	#print(len(x1.parents), len(set(x1.parents)))
 	#for x1p in x1.parents:
 	#	print(x1p.rec_eval(x1p), "\n\n")
+
+	for k,v in Globals.symTable.items():
+		print(k, v.rnd)
 
 
 

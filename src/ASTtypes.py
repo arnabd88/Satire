@@ -5,6 +5,7 @@ import symengine as seng
 import ops_def as ops
 import utils
 import logging
+import math
 from gtokens import *
 
 log = logging.getLogger(__name__)
@@ -71,6 +72,7 @@ class AST(object):
 	def get_rounding(self):
 		return self.rnd * 1.0
 
+import bigfloat as bf
 class Num(AST):
 	__slots__ = ['token']
 	def __init__(self, token):
@@ -81,7 +83,7 @@ class Num(AST):
 
 	@staticmethod
 	def eval(obj):
-		return obj.token.value
+		return float(obj.token.value)
 
 	@staticmethod
 	def build_expression(obj):
@@ -89,7 +91,18 @@ class Num(AST):
 
 	@staticmethod
 	def get_noise(obj):
-		return 0
+		if float(obj.token.value).is_integer and float(obj.token.value) == obj.token.value:
+			return 0
+
+		if bf.sub(bf.BigFloat(obj.token.value, bf.precision(113)),bf.BigFloat(obj.token.value, bf.precision(50)), bf.precision(1024)) == 0:
+			return 0
+		v = math.log(abs(obj.token.value),2)
+		if (v - math.floor(v) != 0.0):
+			if(obj.token.value <= 0):
+				return -pow(2,math.floor(v))
+			else:
+				return pow(2,math.floor(v))
+		return 0.0 #obj.token.value 
 
 class FreeVar(AST):
 	__slots__ = ['token']
@@ -102,7 +115,7 @@ class FreeVar(AST):
 	def eval(obj, round_mode="fl64"):
 		name = str(obj.token.value)
 		obj.depth = 0
-		obj.set_rounding(round_mode)
+		#obj.set_rounding(round_mode)
 		intv = Globals.inputVars.get(obj.token.value, None)
 		if intv is not None and (intv["INTV"][0]==intv["INTV"][1]):
 			return intv["INTV"][0]
@@ -122,7 +135,7 @@ class FreeVar(AST):
 	@staticmethod
 	def get_noise(obj, sound=False):
 		return obj.noise if sound else \
-		       abs(obj.noise[0]) if obj.noise is not None\
+		       obj.noise[0] if obj.noise is not None\
 			   else 0
 
 	def mutate_to_abstract(self, tvalue, tid):
@@ -164,7 +177,8 @@ class TransOp(AST):
 	def eval(obj):
 		lexpr = ops._FOPS[obj.token.type]([obj.children[0].f_expression])
 		obj.depth = obj.children[0].depth+1
-		obj.rnd = obj.children[0].rnd
+		#obj.rnd = obj.children[0].rnd
+		obj.rnd = max([max([child.rnd for child in obj.children]), obj.rnd, 1.0])
 		lexpr =  obj.simplify(lexpr)
 		#print(seng.count_ops(lexpr), obj.depth)
 		return lexpr
@@ -209,8 +223,10 @@ class BinOp(AST):
 		if ((seng.Abs(obj.children[0].f_expression)==1.0 or \
 		seng.Abs(obj.children[1].f_expression)==1.0) and obj.token.type==MUL):
 			obj.rnd = 0.0
-		#else:
-		#	obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
+		else:
+			print("Before overwrite:", obj.rnd)
+			obj.rnd = max([max([child.rnd for child in obj.children]), obj.rnd, 1.0])
+			print("After overwrite:", obj.rnd)
 
 
 		lexpr =  obj.simplify(lexpr)
@@ -226,7 +242,7 @@ class BinOp(AST):
 		seng.Abs(ch_lexpr[1])==1.0):
 			obj.rnd = 0.0
 		else:
-			obj.rnd = max([min([child.rnd for child in obj.children]), 1.0])
+			obj.rnd = max([max([child.rnd for child in obj.children]), 1.0])
 
 
 		return obj.simplify(lexpr)
