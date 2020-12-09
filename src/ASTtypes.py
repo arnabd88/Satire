@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 class AST(object):
 
 	__slots__ = ['depth', 'f_expression', 'children',\
-	'parents', 'noise', 'rnd']
+	'parents', 'noise', 'rnd', 'name']
 
 	def __init__(self):
 		self.depth = 0
@@ -21,6 +21,7 @@ class AST(object):
 		self.parents = () #set()
 		self.noise = (0,0)
 		self.rnd = 1.0
+		self.name = None
 
 	#@staticmethod
 	def set_expression(self, fexpr):
@@ -44,7 +45,7 @@ class AST(object):
 		#	op2 = seng.count_ops(lexpr2)
 		#	if (op2 - op1 > 1000):
 		#		Globals.simplify = False
-		#	return lexpr2 if(seng.count_ops(lexpr2) < seng.count_ops(lexpr)) else lexpr 
+		#	return lexpr2 if(seng.count_ops(lexpr2) < seng.count_ops(lexpr)) else lexpr
 
 		##else:
 		##	lexpr2 = seng.expand(lexpr)
@@ -55,6 +56,10 @@ class AST(object):
 		else:
 			return seng.expand(lexpr)
 		return lexpr
+
+	@staticmethod
+	def rec_build_expression(obj):
+		return obj.build_expression(obj)
 
 	@staticmethod
 	def get_noise(obj):
@@ -73,10 +78,14 @@ class Num(AST):
 		self.token = token
 		self.f_expression = self.eval(self)
 		self.rnd = 0.0
-	
+
 	@staticmethod
 	def eval(obj):
 		return obj.token.value
+
+	@staticmethod
+	def build_expression(obj):
+		return str(obj.token.value)
 
 	@staticmethod
 	def get_noise(obj):
@@ -88,7 +97,7 @@ class FreeVar(AST):
 		super().__init__()
 		self.token = token
 
-		
+
 	@staticmethod
 	def eval(obj, round_mode="fl64"):
 		name = str(obj.token.value)
@@ -99,6 +108,11 @@ class FreeVar(AST):
 			return intv["INTV"][0]
 		else:
 			return seng.var(name)
+
+	@staticmethod
+	def build_expression(obj):
+		return str(obj.token.value)
+
 
 	@staticmethod
 	def set_noise(obj, valueTup):
@@ -120,7 +134,7 @@ class Var(AST):
 	def __init__(self, token):
 		super().__init__()
 		self.token = token
-		
+
 	@staticmethod
 	def eval(obj, round_mode="fl64"):
 		#name = str(obj.token.value)
@@ -131,6 +145,10 @@ class Var(AST):
 		else:
 			return node_lhs.f_expression
 			#return node_lhs.eval()
+
+	@staticmethod
+	def build_expression(obj):
+		return str(obj.token.value)
 
 class TransOp(AST):
 	__slots__ = ['token']
@@ -158,6 +176,16 @@ class TransOp(AST):
 		obj.depth = obj.children[0].depth+1
 		obj.rnd = obj.children[0].rnd
 		return obj.simplify(lexpr)
+
+	@staticmethod
+	def rec_build_expression(obj, use_name=True):
+		if use_name:
+			if obj.name is not None:
+				return str(obj.name)
+		if obj.token.type == COT:
+			return  "1/tan((double)" + obj.children[0].rec_build_expression(obj.children[0]) + ")"
+		else:
+			return ops._CPPOPS[obj.token.type]([obj.children[0].rec_build_expression(obj.children[0])])
 
 	def get_rounding(self):
 		return self.rnd * ops._ALLOC_ULP[self.token.type]
@@ -203,7 +231,14 @@ class BinOp(AST):
 
 		return obj.simplify(lexpr)
 
+	@staticmethod
+	def rec_build_expression(obj, use_name=True):
+		if use_name:
+			if obj.name is not None:
+				return str(obj.name)
+		ch_lexpr = [child.rec_build_expression(child) for child in obj.children]
+		return ops._CPPOPS[obj.token.type](ch_lexpr)
 
 	def get_rounding(self):
 		return self.rnd * ops._ALLOC_ULP[self.token.type]
-	
+

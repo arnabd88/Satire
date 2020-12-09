@@ -17,6 +17,8 @@ from ASTtypes import *
 import helper 
 
 import logging
+import os
+import subprocess
 
 def parseArguments():
 	parser = argparse.ArgumentParser()
@@ -40,6 +42,8 @@ def parseArguments():
 	#									default=0, type=int)
 	parser.add_argument('--simplify', help='Simplify expression -> could be costly for very large expressions',
 										default=False, action='store_true')
+	parser.add_argument('--empiricalanalysiscode', help='Generates cpp code for empirical error analysis',
+						default=False, action='store_true')
 	parser.add_argument('--logfile', help='Python logging file name -> default is default.log', default='default.log')
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
@@ -180,8 +184,96 @@ def	ErrorAnalysis(argList):
 		return full_analysis(probeList, argList, maxdepth)
 	else:
 		return full_analysis(probeList, argList, maxdepth)
-	
 
+def Empirical_analysis_generator(argList):
+
+	cpp_dump_name = argList.file
+	cpp_dump_name = os.path.splitext(cpp_dump_name)[0]+'.cpp'
+	profiling_file_name = os.path.splitext(cpp_dump_name)[0]+'_error_profile.csv'
+	print()
+	cpp_dump = open(cpp_dump_name, 'w')
+	cpp_dump.write("#include <cstdio>\n"
+				   "#include <iostream>\n"
+				   "#include <unistd.h>\n"
+				   "#include <cstdlib>\n"
+				   "#include <cmath>\n"
+				   "#include <quadmath.h>\n"
+				   "#include <time.h>\n\n"
+				   "using namespace std;\n\n")
+
+	for var, interval in dict.items(Globals.inputVars):
+		cpp_dump.write("#define _" + str(var) + "_low " + str(interval['INTV'][0]) + "\n")
+		cpp_dump.write("#define _" + str(var) + "_high " + str(interval['INTV'][1]) + "\n" )
+
+	cpp_dump.write("\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("double _" + str(var) + ";\n")
+
+	cpp_dump.write("\n\n")
+
+	cpp_dump.write("template<class T>\n"
+				   "void init() {\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("\t_" + str(var) + " = _" + str(var) + "_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_" + str(var) + "_high-_" + str(var) + "_low)));\n")
+	cpp_dump.write("}\n\n")
+
+	cpp_dump.write("template<class T>\n"
+				   "T execute_spec_precision()\n"
+				   "{\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("\tT " + str(var) + " = (T) _" + str(var) + ";\n")
+	cpp_dump.write("\n")
+
+	for var, node in dict.items(Globals.symTable):
+		if var not in dict.keys(Globals.inputVars):
+			cpp_dump.write("\tT " + str(var) + " = " + node.rec_build_expression(node, False) + ";\n")
+
+	cpp_dump.write("\n\treturn " + str(Globals.outVars[0]) + ";\n}\n\n\n")
+
+	cpp_dump.write('int main(int argc, char** argv)\n'
+				   '{\n\n'
+				   '\tsrand(time(0));\n'
+				   '\tFILE *fp ;\n'
+				   '\tint N;\n'
+				   '\tsscanf(argv[1], "%d", &N) ;\n'
+				   # '\tfp = fopen("' + profiling_file_name + '", "w+");\n\n'
+				   '\t__float80 val_dp = 0;\n'
+				   '\t__float80 val_sp = 0;\n'
+				   '\t__float80 val_qp = 0;\n'
+				   '\t__float80 err_dp_sp = 0;\n'
+				   '\t__float80 err_qp_dp = 0;\n\n'
+				   '\t//int N = 100000 ;\n\n'
+				   '\t__float80 maxerrdp = 0.0 ;\n'
+				   '\t__float80 maxerrsp = 0.0 ;\n\n\n'
+				   '\tfor (int i=0; i<N; i++) {\n\n'
+				   '\t\tinit<double>();\n'
+				   '\t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n'
+				   '\t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n'
+				   '\t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n'
+				   '\t\terr_dp_sp += fabs(val_dp - val_sp);\n'
+				   '\t\terr_qp_dp += fabs(val_qp - val_dp);\n'
+				   '\t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n'
+				   '\t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n'
+				   '\t\t//	fprintf(fp, "%0.50llf, %0.50llf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n'
+				   '\t}\n'
+	# 			   '\tfclose(fp);\n\n'
+				   '\tcout << "Avg Error in DP -> " << err_qp_dp/N << endl ;\n'
+				   '\tcout << "Avg Error in SP -> " << err_dp_sp/N << endl ;\n'
+				   '\tcout << "Max Error in DP -> " << maxerrdp << endl ;\n'
+				   '\tcout << "Max Error in SP -> " << maxerrsp << endl ;\n\n'
+				   '\treturn 1;\n\n\n'
+				   '}')
+
+	# cpp_dump.write('int main(int argc, char** argv)\n'
+	# 			   '{\n\n'
+	# 				'\tcout << "Max Error in SP -> ";\n\n'
+	# 				'\treturn 1;\n\n\n'
+	# 				'}')
+
+	cpp_dump.close()
 
 if __name__ == "__main__":
 	start_exec_time = time.time()
@@ -212,8 +304,11 @@ if __name__ == "__main__":
 	pr2=time.time()
 	
 	ea1 = time.time()
+	if argList.empiricalanalysiscode:
+		Empirical_analysis_generator(argList)
 	results = ErrorAnalysis(argList)
 	ea2 = time.time()
+
 	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
 	#writeToFile(results)
 

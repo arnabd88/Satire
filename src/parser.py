@@ -148,6 +148,7 @@ class Sparser(object):
 			node = Var(token)
 			self.consume(ID)
 			node = self.CheckSymTable(node, token)
+			node.name = seng.var(token.value)
 			return node
 
 

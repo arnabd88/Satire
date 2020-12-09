@@ -39,6 +39,21 @@ _DFOPS = { PLUS  : [lambda L : 1, lambda L : 1],\
 		   SINH  : [lambda L : cosh(L[0])]	\
 		 }
 
+_CPPOPS = { PLUS : lambda L : "("+L[0]+"+"+L[1]+")"	,\
+		    MINUS : lambda L : "("+L[0]+"-"+L[1]+")"	,\
+		    MUL :	lambda L : "("+L[0]+"*"+L[1]+")"	,\
+		    DIV : lambda L : "("+L[0]+"/"+L[1]+")"	,\
+		    SQRT: lambda L : "sqrt((double)" + L[0] + ")" , \
+		    SIN : lambda L : "sin((double)" + L[0] + ")" , \
+		    COS : lambda L : "cos((double)" + L[0] + ")" , \
+		    LOG :	lambda L : "log((double)" + L[0] + ")" , \
+		    IDEN  : lambda L : L[0] , \
+		    EXP : lambda L : "exp((double)" + L[0] + ")" , \
+		    TAN : lambda L :"tan((double)" + L[0] + ")" , \
+		    COSH : lambda L : "cosh((double)" + L[0] + ")" , \
+		    SINH : lambda L : "sinh((double)" + L[0] + ")" , \
+		 }
+
 
 ## make the case here for optimally finding out
 ## case where the error can be removed when the
