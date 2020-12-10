@@ -147,10 +147,10 @@ class Sparser(object):
 		else:
 			node = Var(token)
 			self.consume(ID)
-			print("Before var check:", type(node), node.rnd, token.value)
+			print("Before var check:", type(node), node.rnd, type(token.value))
 			node = self.CheckSymTable(node, token)
 			print("After var check:", type(node), node.rnd)
-			node.name = seng.var(token.value)
+			node.name = token.value
 			return node
 
 

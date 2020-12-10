@@ -189,8 +189,6 @@ def Empirical_analysis_generator(argList):
 
 	cpp_dump_name = argList.file
 	cpp_dump_name = os.path.splitext(cpp_dump_name)[0]+'.cpp'
-	profiling_file_name = os.path.splitext(cpp_dump_name)[0]+'_error_profile.csv'
-	print()
 	cpp_dump = open(cpp_dump_name, 'w')
 	cpp_dump.write("#include <cstdio>\n"
 				   "#include <iostream>\n"
@@ -202,13 +200,13 @@ def Empirical_analysis_generator(argList):
 				   "using namespace std;\n\n")
 
 	for var, interval in dict.items(Globals.inputVars):
-		cpp_dump.write("#define _" + str(var) + "_low " + str(interval['INTV'][0]) + "\n")
-		cpp_dump.write("#define _" + str(var) + "_high " + str(interval['INTV'][1]) + "\n" )
+		cpp_dump.write("#define _{}_low {}\n".format(str(var), str(interval['INTV'][0])))
+		cpp_dump.write("#define _{}_high {}\n".format(str(var), str(interval['INTV'][1])) )
 
 	cpp_dump.write("\n")
 
 	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("double _" + str(var) + ";\n")
+		cpp_dump.write("double _{};\n".format(str(var)))
 
 	cpp_dump.write("\n\n")
 
@@ -216,22 +214,22 @@ def Empirical_analysis_generator(argList):
 				   "void init() {\n")
 
 	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("\t_" + str(var) + " = _" + str(var) + "_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_" + str(var) + "_high-_" + str(var) + "_low)));\n")
-	cpp_dump.write("}\n\n")
+		cpp_dump.write("\t_{0} = _{0}_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_{0}_high-_{0}_low)));\n".format(str(var),))
 
-	cpp_dump.write("template<class T>\n"
+	cpp_dump.write("}\n\n"
+				   "template<class T>\n"
 				   "T execute_spec_precision()\n"
 				   "{\n")
 
 	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("\tT " + str(var) + " = (T) _" + str(var) + ";\n")
+		cpp_dump.write("\tT {0} = (T) _{0};\n".format(str(var)))
 	cpp_dump.write("\n")
 
 	for var, node in dict.items(Globals.symTable):
 		if var not in dict.keys(Globals.inputVars):
-			cpp_dump.write("\tT " + str(var) + " = " + node.rec_build_expression(node, False) + ";\n")
+			cpp_dump.write("\tT {} = {};\n".format(str(var), node.rec_build_expression(node, False)))
 
-	cpp_dump.write("\n\treturn " + str(Globals.outVars[0]) + ";\n}\n\n\n")
+	cpp_dump.write("\n\treturn {0};\n}}\n\n\n".format(str(Globals.outVars[0])))
 
 	cpp_dump.write('int main(int argc, char** argv)\n'
 				   '{\n\n'
@@ -239,7 +237,6 @@ def Empirical_analysis_generator(argList):
 				   '\tFILE *fp ;\n'
 				   '\tint N;\n'
 				   '\tsscanf(argv[1], "%d", &N) ;\n'
-				   # '\tfp = fopen("' + profiling_file_name + '", "w+");\n\n'
 				   '\t__float80 val_dp = 0;\n'
 				   '\t__float80 val_sp = 0;\n'
 				   '\t__float80 val_qp = 0;\n'
@@ -259,19 +256,12 @@ def Empirical_analysis_generator(argList):
 				   '\t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n'
 				   '\t\t//	fprintf(fp, "%0.50llf, %0.50llf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n'
 				   '\t}\n'
-	# 			   '\tfclose(fp);\n\n'
 				   '\tcout << "Avg Error in DP -> " << err_qp_dp/N << endl ;\n'
 				   '\tcout << "Avg Error in SP -> " << err_dp_sp/N << endl ;\n'
 				   '\tcout << "Max Error in DP -> " << maxerrdp << endl ;\n'
 				   '\tcout << "Max Error in SP -> " << maxerrsp << endl ;\n\n'
 				   '\treturn 1;\n\n\n'
 				   '}')
-
-	# cpp_dump.write('int main(int argc, char** argv)\n'
-	# 			   '{\n\n'
-	# 				'\tcout << "Max Error in SP -> ";\n\n'
-	# 				'\treturn 1;\n\n\n'
-	# 				'}')
 
 	cpp_dump.close()
 
