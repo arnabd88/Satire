@@ -38,7 +38,7 @@ def merge( n, node, parent_dict):
 def dfs_expression_builder(node, reachable, parent_dict, csetbl, probeList, build):
 
 	for child in node.children:
-		print("dfs-expression-builder:", child.rnd)
+		#print("dfs-expression-builder:", child.rnd)
 		if not reachable[child.depth].__contains__(child):
 			dfs_expression_builder(child, reachable, parent_dict, csetbl, probeList, build)
 		parent_dict[child].append(node)
@@ -59,7 +59,7 @@ def dfs_expression_builder(node, reachable, parent_dict, csetbl, probeList, buil
 				csetbl[node.f_expression].remove(n)
 				del n
 
-	print("out dfs-expression-builder:", node.rnd)
+	#print("out dfs-expression-builder:", node.rnd)
 
 	#Globals.symTable = {k:v for k,v in Globals.symTable.items() if not removeNodes.__contains__(v)}
 	#for child in node.children:
@@ -74,11 +74,11 @@ def expression_builder(probeList, build=True):
 	csetbl = defaultdict(set)
 
 	for node in probeList:
-		print("expression-builder:", node.rnd)
+		#print("expression-builder:", node.rnd)
 		if not reachable[node.depth].__contains__(node):
 			dfs_expression_builder(node, reachable, parent_dict, csetbl, probeList, build)
 
-	print("outof expression-builder:", node.rnd)
+	#print("outof expression-builder:", node.rnd)
 	del reachable
 	del csetbl
 
