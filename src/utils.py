@@ -167,73 +167,78 @@ class MyPool(multiprocessing.pool.Pool):
 		super(MyPool, self).__init__(*args, **kwargs)
 
 
-# def error_query_reduction( QworkList, reduction=True ):
-# 
-# 	#!pred, pred
-# 	QS, QC = partition(QworkList, lambda x: seng.count_ops(x)==0)
-# 	#QS = [(str(sym_expr),extract_input_dep(list(sym_expr.free_symbols))) for sym_expr in QS]
-# 	QS = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
-# 
-# 	#sigTup = tuple(map(genSig, QS))
-# 
-# 	#intv_QS = tuple(map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
-# 
-# 	pool = MyPool()
-# 	intv_QS = tuple(pool.map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
-# 	pool.close()
-# 	pool.join()
-# 
-# 	return sum([max([abs(i) for i in intv]) for intv in intv_QS])
-
-	
-
 def error_query_reduction( QworkList, reduction=True ):
 
 	#!pred, pred
-	QS_temp, QC = partitionList(QworkList, lambda x: seng.count_ops(x)==0)
+	print("New reduction query", [seng.count_ops(x) for x in QworkList])
+	QS, QC = partition(QworkList, lambda x: seng.count_ops(x)==0)
 	#QS = [(str(sym_expr),extract_input_dep(list(sym_expr.free_symbols))) for sym_expr in QS]
-	#QS = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
+	QS = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
 
-	HashList = list(map(genSig, QS_temp))
-	HashBin = {sig: [i for i,x in enumerate(HashList) if x==sig] for sig in list(set(HashList))}
-	ExistSig, QS_sig = partitionList(HashList, lambda x: x not in Globals.hashBank.keys())
-	QS = [QS_temp[HashBin[sig][0]] for sig in QS_sig]
-	Fresh = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
+	#sigTup = tuple(map(genSig, QS))
+
+	#intv_QS = tuple(map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
+
 	pool = MyPool()
-	intv_QS = tuple(pool.map(invoke_gelpia, Fresh))
-	pool.close()
-	pool.join()
+	intv_QS = tuple(pool.map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
+	#pool.close()
+	#pool.join()
+	print("End reduction query")
 
-	QS_acc = sum( \
-	            [ \
-				  max([abs(i) for i in intv])*len(HashBin[QS_sig[j]]) \
-				  for j,intv in enumerate(intv_QS)\
-				]\
-				)
+	return sum([max([abs(i) for i in intv]) for intv in intv_QS])
 
-	Exist_acc = sum( \
-	            [ \
-				  max([abs(i) for i in intv])*len(HashBin[ExistSig[j]]) \
-				  for j,intv in enumerate([Globals.hashBank[k] for k in ExistSig])\
-				]\
-				)
+	
 
-
-	#Exist_acc = sum([max([abs(i) for i in intv])*len(HashBin[ExistSig[j]]) for j,intv in [Globals.hashBank[k] for k in Exist]])
-	QC_acc = sum([abs(float(str(x))) for x in QC])
-
-	## ---------- update the hashBank for a specific threshold size ------- ##
-	hbs = len(Globals.hashBank.keys())
-	if len(QS)==0:
-		pass
-	elif (hbs > 100):
-		list(map(lambda x : Globals.hashBank.popitem(x) , list(Globals.hashBank.keys())[0:int(hbs/2)]))
-
-	for i,k in enumerate(QS_sig):
-		Globals.hashBank[k] = intv_QS[i] 
-
-	error_acc = QS_acc + Exist_acc + QC_acc
-	return error_acc
+# def error_query_reduction( QworkList, reduction=True ):
+# 
+# 	#!pred, pred
+# 	print("New call", len(QworkList), [seng.count_ops(x) for x in QworkList])
+# 	QS_temp, QC = partitionList(QworkList, lambda x: seng.count_ops(x)==0)
+# 	#QS = [(str(sym_expr),extract_input_dep(list(sym_expr.free_symbols))) for sym_expr in QS]
+# 	#QS = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
+# 
+# 	HashList = list(map(genSig, QS_temp))
+# 	HashBin = {sig: [i for i,x in enumerate(HashList) if x==sig] for sig in list(set(HashList))}
+# 	ExistSig, QS_sig = partitionList(HashList, lambda x: x not in Globals.hashBank.keys())
+# 	QS = [QS_temp[HashBin[sig][0]] for sig in QS_sig]
+# 	Fresh = map( lambda x: (str(x), extract_input_dep(list(x.free_symbols))), QS )
+# 	pool = MyPool()
+# 	intv_QS = tuple(pool.map(invoke_gelpia, Fresh))
+# 	pool.close()
+# 	pool.join()
+# 	print("Finished pool")
+# 
+# 	QS_acc = sum( \
+# 	            [ \
+# 				  max([abs(i) for i in intv])*len(HashBin[QS_sig[j]]) \
+# 				  for j,intv in enumerate(intv_QS)\
+# 				]\
+# 				)
+# 
+# 	Exist_acc = sum( \
+# 	            [ \
+# 				  max([abs(i) for i in intv])*len(HashBin[ExistSig[j]]) \
+# 				  for j,intv in enumerate([Globals.hashBank[k] for k in ExistSig])\
+# 				]\
+# 				)
+# 
+# 
+# 	#Exist_acc = sum([max([abs(i) for i in intv])*len(HashBin[ExistSig[j]]) for j,intv in [Globals.hashBank[k] for k in Exist]])
+# 	QC_acc = sum([abs(float(str(x))) for x in QC])
+# 
+# 	## ---------- update the hashBank for a specific threshold size ------- ##
+# 	hbs = len(Globals.hashBank.keys())
+# 	if len(QS)==0:
+# 		pass
+# 	elif (hbs > 100):
+# 		list(map(lambda x : Globals.hashBank.popitem(x) , list(Globals.hashBank.keys())[0:int(hbs/2)]))
+# 
+# 	for i,k in enumerate(QS_sig):
+# 		Globals.hashBank[k] = intv_QS[i] 
+# 
+# 	error_acc = QS_acc + Exist_acc + QC_acc
+# 	print("Happy to exit\n")
+# 	return error_acc
 
 def invoke_gelpia_serial(symExpr):
 	inputStr = extract_input_dep(list(symExpr.free_symbols))
