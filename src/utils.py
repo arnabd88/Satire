@@ -181,8 +181,8 @@ def error_query_reduction( QworkList, reduction=True ):
 
 	pool = MyPool()
 	intv_QS = tuple(pool.map(invoke_gelpia, QS))+tuple([float(str(x))]*2 for x in QC)
-	#pool.close()
-	#pool.join()
+	pool.close()
+	pool.join()
 	print("End reduction query")
 
 	return sum([max([abs(i) for i in intv]) for intv in intv_QS])
