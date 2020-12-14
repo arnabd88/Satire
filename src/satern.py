@@ -20,6 +20,7 @@ import logging
 import os
 import subprocess
 
+from pathlib import Path
 def parseArguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--file', help='Test file name', required=True)
@@ -43,7 +44,7 @@ def parseArguments():
 	parser.add_argument('--simplify', help='Simplify expression -> could be costly for very large expressions',
 										default=False, action='store_true')
 	parser.add_argument('--empiricalanalysiscode', help='Generates cpp code for empirical error analysis',
-						default=False, action='store_true')
+						default=0, type=int)
 	parser.add_argument('--logfile', help='Python logging file name -> default is default.log', default='default.log')
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
@@ -187,9 +188,8 @@ def	ErrorAnalysis(argList):
 
 def Empirical_analysis_generator(argList):
 
-	cpp_dump_name = argList.file
-	cpp_dump_name = os.path.splitext(cpp_dump_name)[0]+'.cpp'
-	cpp_dump = open(cpp_dump_name, 'w')
+	cpp_dump_path = Path(argList.file).with_suffix(".cpp")
+	cpp_dump = open(cpp_dump_path, 'w')
 	cpp_dump.write("#include <cstdio>\n"
 				   "#include <iostream>\n"
 				   "#include <unistd.h>\n"
@@ -235,14 +235,12 @@ def Empirical_analysis_generator(argList):
 				   '{\n\n'
 				   '\tsrand(time(0));\n'
 				   '\tFILE *fp ;\n'
-				   '\tint N;\n'
-				   '\tsscanf(argv[1], "%d", &N) ;\n'
 				   '\t__float80 val_dp = 0;\n'
 				   '\t__float80 val_sp = 0;\n'
 				   '\t__float80 val_qp = 0;\n'
 				   '\t__float80 err_dp_sp = 0;\n'
 				   '\t__float80 err_qp_dp = 0;\n\n'
-				   '\t//int N = 100000 ;\n\n'
+				   '\tint N = ' + str(argList.empiricalanalysiscode) +' ;\n\n'
 				   '\t__float80 maxerrdp = 0.0 ;\n'
 				   '\t__float80 maxerrsp = 0.0 ;\n\n\n'
 				   '\tfor (int i=0; i<N; i++) {\n\n'
@@ -260,10 +258,14 @@ def Empirical_analysis_generator(argList):
 				   '\tcout << "Avg Error in SP -> " << err_dp_sp/N << endl ;\n'
 				   '\tcout << "Max Error in DP -> " << maxerrdp << endl ;\n'
 				   '\tcout << "Max Error in SP -> " << maxerrsp << endl ;\n\n'
-				   '\treturn 1;\n\n\n'
+				   '\treturn 0;\n\n\n'
 				   '}')
 
 	cpp_dump.close()
+
+	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem], cwd=cpp_dump_path.parent)
+	result=subprocess.run(["./"+cpp_dump_path.stem, "10"], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
+	print(result.stdout.decode("utf-8"))
 
 if __name__ == "__main__":
 	start_exec_time = time.time()
@@ -294,9 +296,10 @@ if __name__ == "__main__":
 	pr2=time.time()
 	
 	ea1 = time.time()
-	if argList.empiricalanalysiscode:
-		Empirical_analysis_generator(argList)
 	results = ErrorAnalysis(argList)
+	print("\n\n----------- Empirical Error Analysis ----------")
+	if argList.empiricalanalysiscode != 0:
+		Empirical_analysis_generator(argList)
 	ea2 = time.time()
 
 	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
