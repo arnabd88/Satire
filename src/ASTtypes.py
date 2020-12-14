@@ -224,9 +224,9 @@ class BinOp(AST):
 		seng.Abs(obj.children[1].f_expression)==1.0) and obj.token.type==MUL):
 			obj.rnd = 0.0
 		else:
-			print("Before overwrite:", obj.rnd)
+			#print("Before overwrite:", obj.rnd)
 			obj.rnd = max([max([child.rnd for child in obj.children]), obj.rnd, 1.0])
-			print("After overwrite:", obj.rnd)
+			#print("After overwrite:", obj.rnd)
 
 
 		lexpr =  obj.simplify(lexpr)
