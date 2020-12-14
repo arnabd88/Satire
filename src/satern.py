@@ -241,6 +241,7 @@ def Empirical_analysis_generator(argList):
 				   '\t__float80 err_dp_sp = 0;\n'
 				   '\t__float80 err_qp_dp = 0;\n\n'
 				   '\tint N = ' + str(argList.empiricalanalysiscode) +' ;\n\n'
+					'\tfp = fopen("' + cpp_dump_path.stem + '_error_profile.csv", "w+");\n'
 				   '\t__float80 maxerrdp = 0.0 ;\n'
 				   '\t__float80 maxerrsp = 0.0 ;\n\n\n'
 				   '\tfor (int i=0; i<N; i++) {\n\n'
@@ -251,8 +252,8 @@ def Empirical_analysis_generator(argList):
 				   '\t\terr_dp_sp += fabs(val_dp - val_sp);\n'
 				   '\t\terr_qp_dp += fabs(val_qp - val_dp);\n'
 				   '\t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n'
-				   '\t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n'
-				   '\t\t//	fprintf(fp, "%0.50llf, %0.50llf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n'
+					'\t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n'
+					'\t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n'
 				   '\t}\n'
 				   '\tcout << "Avg Error in DP -> " << err_qp_dp/N << endl ;\n'
 				   '\tcout << "Avg Error in SP -> " << err_dp_sp/N << endl ;\n'
@@ -264,7 +265,7 @@ def Empirical_analysis_generator(argList):
 	cpp_dump.close()
 
 	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem], cwd=cpp_dump_path.parent)
-	result=subprocess.run(["./"+cpp_dump_path.stem, "10"], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
+	result=subprocess.run(["./"+cpp_dump_path.stem], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
 	print(result.stdout.decode("utf-8"))
 
 if __name__ == "__main__":
