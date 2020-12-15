@@ -43,7 +43,10 @@ def parseArguments():
 	#									default=0, type=int)
 	parser.add_argument('--simplify', help='Simplify expression -> could be costly for very large expressions',
 										default=False, action='store_true')
-	parser.add_argument('--empiricalanalysiscode', help='Generates cpp code for empirical error analysis',
+	parser.add_argument('--empiricalanalysiscode', help='Generates cpp code for empirical error analysis. Takes an'
+														'integer denoting the number of times the shadow value analysis'
+														'runs with different input values and outputs the max error'
+														'observed among those executions. Default is 0',
 						default=0, type=int)
 	parser.add_argument('--logfile', help='Python logging file name -> default is default.log', default='default.log')
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
