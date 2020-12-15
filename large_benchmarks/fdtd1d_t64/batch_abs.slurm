@@ -12,7 +12,7 @@ source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file fdtd1d_64.txt \
@@ -23,7 +23,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file fdtd1d_64.txt \
@@ -34,7 +34,7 @@ python3 ../../src/satern.py \
 		--maxdepth 25
 
 # Abs window : (20,40)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file fdtd1d_64.txt \
@@ -45,7 +45,7 @@ python3 ../../src/satern.py \
 		--maxdepth 40
 
 # no-Abs 
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file fdtd1d_64.txt \

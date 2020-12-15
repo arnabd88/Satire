@@ -12,7 +12,7 @@ source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file Scan_4096.txt \
 		--logfile Scan_4096_abs-serial_10_20.pylog \
@@ -22,7 +22,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file Scan_4096.txt \
 		--logfile Scan_4096_abs-serial_15_25.pylog \
@@ -31,7 +31,7 @@ python3 ../../src/satern.py \
 		--mindepth 15 \
 		--maxdepth 25
 
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file Scan_4096.txt \
 		--logfile Scan_4096_abs-serial_20_40.pylog \
@@ -40,7 +40,7 @@ python3 ../../src/satern.py \
 		--mindepth 20 \
 		--maxdepth 40
 
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file Scan_4096.txt \
 		--logfile Scan_4096_abs-serial_noAbs.pylog \
