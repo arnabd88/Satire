@@ -27,7 +27,7 @@ Satire requires the following softwares to be installed.
 Satire is a python based framework. The main function is available is "src/satern.py"
 The "--help" command clarifies all the supporting arguments
 
-#### Example1 (with default options)
+#### Example1 (with default options: serialized, no abstraction, no empirical analysis)
   > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
 
  The execution generates a `default.log` containing logging traces of the execution for debugging. This file name can be modified using the `--logfile <filename1>` option.
@@ -41,26 +41,33 @@ The "--help" command clarifies all the supporting arguments
 	
 	//-------------------------------------
 	VAR : A_9_0
-	ABSOLUTE_ERROR : 5.684341886080801e-13
-	First-order Error : 5.684341886080801e-13
+	ABSOLUTE_ERROR : 1.2505552149377763e-12
+	First-order Error : 1.2505552149377763e-12
 	REAL_INTERVAL : [-1024, 1024.0]
-	FP_INTERVAL : [-1024.0000000000005, 1024.0000000000005]
+	FP_INTERVAL : [-1024.0000000000014, 1024.0000000000014]
 	//-------------------------------------
 	
-	Optimizer Calls: 5
-	Parsing time : 0.10396647453308105
-	PreProcessing time : 0.0016448497772216797
-	Analysis time : 33.121673822402954
-	Full time : 33.23301911354065
-
+	Optimizer Calls: 0
+	Parsing time : 0.16805672645568848
+	
+	PreProcessing time : 0.0013127326965332031
+	Analysis time : 29.50110626220703
+	Full time : 29.67192506790161
 
 #### Example2 (with abstraction option)
-  > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
+  > python3 src/satire.py --std --file large_benchmarks/reduction/Reduction_1024.txt --enable-abstraction --mindepth 15 --maxdepth 25
 
   Abstraction is by default turned off. Abstraction can be enabled using the  `--enable-abstraction` switch. 
   The default abstraction window inside Satire is set to (10,40). using `--mindepth <lower_depth>` and `--maxdepth <higher_depth>`, the lower bound
   and the upper bound of the abstraction window can be changed as desired.
 
+#### Example3 (with parallelism enabled)
+  > python3 src/satire.py --std --file large_benchmarks/reduction/Reduction_1024.txt --parallel
+
+  Using `--parallel` switch, the user can fork multiple optimizer calls concurrently. To enable this, Satire maintains a worklist
+  of optimizer queries, and resorts to solving them in parallel once the worklist exceeds a certain threshold (currently set at 20).
+  The paralleism support is enabled on top of an expression hashing mechanism that reduces query time by storing digital signatures of the
+  already solved queries.
 
 #### Testing
  A `runScipt` is provided inside the directory `large_benchmarks`. It contains the list of all
