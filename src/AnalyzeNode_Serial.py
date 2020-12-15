@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class AnalyzeNode_Serial(object):
 
-	__slots__ = ['workList', 'next_workList', 'QworkList', 'parentTracker', 'completed', \
+	__slots__ = ['workList', 'next_workList', 'QworkList', 'Qthreshold', 'parentTracker', 'completed', \
 	             'Accumulator', 'results', 'bwdDeriv', 'probeList', 'trimList',\
 				 'argList', 'parent_dict', 'simplify', 'maxdepth', 'force']
 				 
@@ -33,6 +33,7 @@ class AnalyzeNode_Serial(object):
 		self.results = {}
 		self.bwdDeriv = {}#defaultdict(dict)
 		self.QworkList = {}
+		self.Qthreshold = 20 if Globals.argList.parallel else 1
 
 
 	def __init__(self, probeNodeList, argList, maxdepth, force):
@@ -146,7 +147,7 @@ class AnalyzeNode_Serial(object):
 				self.QworkList[outVar].append(expr_solve)
 			else:
 				self.Accumulator[outVar] += seng.expand(expr_solve)
-			if len(self.QworkList[outVar]) > 10:
+			if len(self.QworkList[outVar]) >= self.Qthreshold:
 				self.Accumulator[outVar] += utils.error_query_reduction(self.QworkList[outVar])
 				self.QworkList[outVar].clear()
 			#self.Accumulator[outVar] += seng.expand(expr_solve)

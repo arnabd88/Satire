@@ -7,6 +7,8 @@
 
 from collections import OrderedDict, defaultdict
 
+argList = None
+
 inputVars = {}
 outVars = []
 lhstbl = {}
@@ -35,6 +37,7 @@ hashBank = OrderedDict()
 #BinOpID = 0
 #TransOpID = 0
 gelpiaID = 0
+batchID = 0
 FID=0
 
 ## CandidateList to track the depth

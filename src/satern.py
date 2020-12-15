@@ -188,6 +188,8 @@ if __name__ == "__main__":
 	argList = parseArguments()
 	sys.setrecursionlimit(10**6)
 	print(argList)
+	assert(Globals.argList==None)
+	Globals.argList = argList
 	text = open(argList.file, 'r').read()
 	fout = open(argList.outfile, 'w')
 	##-----------------------
