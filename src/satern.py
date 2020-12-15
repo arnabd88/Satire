@@ -43,9 +43,10 @@ def parseArguments():
 	parser.add_argument('--logfile', help='Python logging file name -> default is default.log', default='default.log')
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
-	parser.add_argument('--sound', help='Turn on analysis for higher order errors', default=False, action='store_true')
+	parser.add_argument('--sound', help='Turn on analysis for higher order errors(Disabled for now)', default=False, action='store_true')
 	parser.add_argument('--compress', help='Perform signature matching to reduce optimizer calls using hashing and md5 signature', default=False, action='store_true')
-	parser.add_argument('--force', help='Sideline additional tricks used for non-linear examples. Use this option for linear examples', default=False, action='store_true')
+	#parser.add_argument('--force', help='Sideline additional tricks used for non-linear examples. Use this option for linear examples', default=False, action='store_true')
+	parser.add_argument('--gverbose', help='Create dumps of each optimizer query for debiugging', default=False, action='store_true') 
 	                                  
 
 	result = parser.parse_args()

@@ -98,6 +98,17 @@ def invoke_gelpia(sexpr_inpstr_tuple):
 	str_expr = re.sub(r're\b', "", str_expr)
 	str_expr = re.sub(r'im\b', "0.0*", str_expr)
 	str_expr = inputStr + str_expr
+
+	if Globals.argList.gverbose:
+		filename = "gelpia_{batchid}_{pid}.txt".format(batchid=Globals.batchID, pid=os.getpid())
+		fout = open(filename, 'w')
+		fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
+		fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
+		fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
+		fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
+		fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
+		fout.write(str_expr)
+		fout.close()
 	
 	max_lower = Value("d", float("nan"))
 	max_upper = Value("d", float("nan"))
@@ -274,6 +285,19 @@ def invoke_gelpia_serial(symExpr):
 	max_lower = Value("d", float("nan"))
 	max_upper = Value("d", float("nan"))
 	#print("ID:",Globals.gelpiaID, "\t Finding max, min\n")
+	##-- Create dumps if verbose is on ---
+	if Globals.argList.gverbose:
+		filename = "gelpia_{batchid}_{pid}.txt".format(batchid=Globals.batchID, pid=os.getpid())
+		fout = open(filename, 'w')
+		fout.write("# --input-epsilon {ieps}\n".format(ieps=str(gelpia_input_epsilon)))
+		fout.write("# --output-epsilon {oeps}\n".format(oeps=str(gelpia_output_epsilon)))
+		fout.write("# --output-epsilon-relative {oreps}\n".format(oreps=str(gelpia_output_epsilon_relative)))
+		fout.write("# --timeout {tout}\n".format(tout=str(gelpia_timeout)))
+		fout.write("# --max-iters {miters}\n".format(miters=str(gelpia_max_iters)))
+		fout.write(str_expr)
+		fout.close()
+
+	##---
 	p = Process(target=gelpia.find_max, args=(str_expr,
 	                                          gelpia_epsilons,
 	                                          gelpia_timeout,
