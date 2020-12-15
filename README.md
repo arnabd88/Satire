@@ -68,6 +68,11 @@ The "--help" command clarifies all the supporting arguments
   of optimizer queries, and resorts to solving them in parallel once the worklist exceeds a certain threshold (currently set at 20).
   The paralleism support is enabled on top of an expression hashing mechanism that reduces query time by storing digital signatures of the
   already solved queries.
+  
+#### Example4 (with Empirical Code Analysis option)
+> python3 src/satire.py --std --file large_benchmarks/reduction/Reduction_1024.txt --empirical 100000000
+
+The `--empirical` flag generates a C++ code for the benchmark performing shadow value analysis for single precision and double precision types. For higher precision it uses quad precision as a proxy to real numbers. The input this flag takes is an integer which denotes the number of times the shadow value analysis is performed and the code outputs the max error and the average error for the two types over all executions. The default value for this flag is 0 in which case the C++ code is not generated.
 
 #### Testing
  A `runScipt` is provided inside the directory `large_benchmarks`. It contains the list of all
