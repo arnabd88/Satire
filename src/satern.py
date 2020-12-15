@@ -43,7 +43,7 @@ def parseArguments():
 	#									default=0, type=int)
 	parser.add_argument('--simplify', help='Simplify expression -> could be costly for very large expressions',
 										default=False, action='store_true')
-	parser.add_argument('--empiricalanalysiscode', help='Generates cpp code for empirical error analysis. Takes an'
+	parser.add_argument('--empirical', help='Generates cpp code for empirical error analysis. Takes an'
 														'integer denoting the number of times the shadow value analysis'
 														'runs with different input values and outputs the max error'
 														'observed among those executions. Default is 0',
@@ -190,7 +190,7 @@ def	ErrorAnalysis(argList):
 	else:
 		return full_analysis(probeList, argList, maxdepth)
 
-def Empirical_analysis_generator(argList):
+def Empirical_analysis_generator(argList, maxError):
 
 	cpp_dump_path = Path(argList.file).with_suffix(".cpp")
 	cpp_dump = open(cpp_dump_path, 'w')
@@ -201,6 +201,7 @@ def Empirical_analysis_generator(argList):
 				   "#include <cmath>\n"
 				   "#include <quadmath.h>\n"
 				   "#include <time.h>\n\n"
+				   "#include <cassert>\n\n"
 				   "using namespace std;\n\n")
 
 	for var, interval in dict.items(Globals.inputVars):
@@ -235,36 +236,37 @@ def Empirical_analysis_generator(argList):
 
 	cpp_dump.write("\n\treturn {0};\n}}\n\n\n".format(str(Globals.outVars[0])))
 
-	cpp_dump.write('int main(int argc, char** argv)\n'
-				   '{\n\n'
-				   '\tsrand(time(0));\n'
-				   '\tFILE *fp ;\n'
-				   '\t__float80 val_dp = 0;\n'
-				   '\t__float80 val_sp = 0;\n'
-				   '\t__float80 val_qp = 0;\n'
-				   '\t__float80 err_dp_sp = 0;\n'
-				   '\t__float80 err_qp_dp = 0;\n\n'
-				   '\tint N = ' + str(argList.empiricalanalysiscode) +' ;\n\n'
-					'\tfp = fopen("' + cpp_dump_path.stem + '_error_profile.csv", "w+");\n'
-				   '\t__float80 maxerrdp = 0.0 ;\n'
-				   '\t__float80 maxerrsp = 0.0 ;\n\n\n'
-				   '\tfor (int i=0; i<N; i++) {\n\n'
-				   '\t\tinit<double>();\n'
-				   '\t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n'
-				   '\t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n'
-				   '\t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n'
-				   '\t\terr_dp_sp += fabs(val_dp - val_sp);\n'
-				   '\t\terr_qp_dp += fabs(val_qp - val_dp);\n'
-				   '\t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n'
-					'\t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n'
-					'\t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n'
-				   '\t}\n'
-				   '\tcout << "Avg Error in DP -> " << err_qp_dp/N << endl ;\n'
-				   '\tcout << "Avg Error in SP -> " << err_dp_sp/N << endl ;\n'
-				   '\tcout << "Max Error in DP -> " << maxerrdp << endl ;\n'
-				   '\tcout << "Max Error in SP -> " << maxerrsp << endl ;\n\n'
-				   '\treturn 0;\n\n\n'
-				   '}')
+	cpp_dump.write('int main(int argc, char** argv)\n \
+				   {{\n\n \
+				   \tsrand(time(0));\n \
+				   \tFILE *fp ;\n \
+				   \t__float80 val_dp = 0;\n \
+				   \t__float80 val_sp = 0;\n \
+				   \t__float80 val_qp = 0;\n \
+				   \t__float80 err_dp_sp = 0;\n \
+				   \t__float80 err_qp_dp = 0;\n\n \
+				   \tint N = {empiricalanalysiscode} ;\n\n \
+				   \tfp = fopen("{cpp_dump_path_stem}_error_profile.csv", "w+");\n \
+				   \t__float80 maxerrdp = 0.0 ;\n \
+				   \t__float80 maxerrsp = 0.0 ;\n\n\n \
+				   \tfor (int i=0; i<N; i++) {{\n\n \
+				   \t\tinit<double>();\n \
+				   \t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n \
+				   \t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n \
+				   \t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n \
+				   \t\terr_dp_sp += fabs(val_dp - val_sp);\n \
+				   \t\terr_qp_dp += fabs(val_qp - val_dp);\n \
+				   \t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n \
+				   \t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n \
+				   \t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n \
+				   \t}}\n \
+				   \tcout << "Avg Error in double precision -> " << err_qp_dp/N << endl ;\n \
+				   \tcout << "Avg Error in single precision -> " << err_dp_sp/N << endl ;\n \
+				   \tcout << "Max Error in double precision -> " << maxerrdp << endl ;\n \
+				   \tcout << "Max Error in single precision -> " << maxerrsp << endl ;\n\n \
+				   \tassert({maxabserr} >= maxerrdp);\n \
+				   \treturn 0;\n\n\n \
+				   }}'.format(maxabserr=maxError, empiricalanalysiscode=argList.empirical, cpp_dump_path_stem=cpp_dump_path.stem))
 
 	cpp_dump.close()
 
@@ -304,9 +306,13 @@ if __name__ == "__main__":
 	
 	ea1 = time.time()
 	results = ErrorAnalysis(argList)
+	##--
+	maxError = [results[Globals.symTable[outVar]]["ERR"] * pow(2,-53) for outVar in Globals.outVars][0]
+	##--
 	print("\n\n----------- Empirical Error Analysis ----------")
-	if argList.empiricalanalysiscode != 0:
-		Empirical_analysis_generator(argList)
+	if argList.empirical!= 0:
+		assert(len(Globals.outVars)==1)
+		Empirical_analysis_generator(argList, maxError)
 	ea2 = time.time()
 
 	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
