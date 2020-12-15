@@ -2,8 +2,8 @@
 
 # SATIRE: Scalable Abstraction-guided Technique for Incremental Rigorous analysis of round-off Errors
 
-Satire is a first order error analysis tools for obtaining rigorous bounds on 
-floating point round-off errors. It works on straight line floating-point programs.
+Satire is a first order error analysis tool for obtaining rigorous bounds on 
+worst case floating point round-off errors. It works on straight line floating-point programs.
 Satire, sheds light on how scalability and bound-tightness can be attained through
 a combination of incremental analysis,  abstraction, and judicious use of concrete 
 and symbolic evaluation. 
@@ -20,6 +20,8 @@ Satire requires the following softwares to be installed.
 	* [symengine](https://github.com/symengine/symengine)
 	* [sympy](https://www.sympy.org/en/index.html)
 	* [gelpia](https://github.com/soarlab/gelpia)
+		* After installation, make gelpia/bin available in $PATH
+
 
 ## Usage
 
