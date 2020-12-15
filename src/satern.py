@@ -190,89 +190,6 @@ def	ErrorAnalysis(argList):
 	else:
 		return full_analysis(probeList, argList, maxdepth)
 
-def Empirical_analysis_generator(argList, maxError):
-
-	cpp_dump_path = Path(argList.file).with_suffix(".cpp")
-	cpp_dump = open(cpp_dump_path, 'w')
-	cpp_dump.write("#include <cstdio>\n"
-				   "#include <iostream>\n"
-				   "#include <unistd.h>\n"
-				   "#include <cstdlib>\n"
-				   "#include <cmath>\n"
-				   "#include <quadmath.h>\n"
-				   "#include <time.h>\n\n"
-				   "#include <cassert>\n\n"
-				   "using namespace std;\n\n")
-
-	for var, interval in dict.items(Globals.inputVars):
-		cpp_dump.write("#define _{}_low {}\n".format(str(var), str(interval['INTV'][0])))
-		cpp_dump.write("#define _{}_high {}\n".format(str(var), str(interval['INTV'][1])) )
-
-	cpp_dump.write("\n")
-
-	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("double _{};\n".format(str(var)))
-
-	cpp_dump.write("\n\n")
-
-	cpp_dump.write("template<class T>\n"
-				   "void init() {\n")
-
-	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("\t_{0} = _{0}_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_{0}_high-_{0}_low)));\n".format(str(var),))
-
-	cpp_dump.write("}\n\n"
-				   "template<class T>\n"
-				   "T execute_spec_precision()\n"
-				   "{\n")
-
-	for var in dict.keys(Globals.inputVars):
-		cpp_dump.write("\tT {0} = (T) _{0};\n".format(str(var)))
-	cpp_dump.write("\n")
-
-	for var, node in dict.items(Globals.symTable):
-		if var not in dict.keys(Globals.inputVars):
-			cpp_dump.write("\tT {} = {};\n".format(str(var), node.rec_build_expression(node, False)))
-
-	cpp_dump.write("\n\treturn {0};\n}}\n\n\n".format(str(Globals.outVars[0])))
-
-	cpp_dump.write('int main(int argc, char** argv)\n \
-				   {{\n\n \
-				   \tsrand(time(0));\n \
-				   \tFILE *fp ;\n \
-				   \t__float80 val_dp = 0;\n \
-				   \t__float80 val_sp = 0;\n \
-				   \t__float80 val_qp = 0;\n \
-				   \t__float80 err_dp_sp = 0;\n \
-				   \t__float80 err_qp_dp = 0;\n\n \
-				   \tint N = {empiricalanalysiscode} ;\n\n \
-				   \tfp = fopen("{cpp_dump_path_stem}_error_profile.csv", "w+");\n \
-				   \t__float80 maxerrdp = 0.0 ;\n \
-				   \t__float80 maxerrsp = 0.0 ;\n\n\n \
-				   \tfor (int i=0; i<N; i++) {{\n\n \
-				   \t\tinit<double>();\n \
-				   \t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n \
-				   \t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n \
-				   \t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n \
-				   \t\terr_dp_sp += fabs(val_dp - val_sp);\n \
-				   \t\terr_qp_dp += fabs(val_qp - val_dp);\n \
-				   \t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n \
-				   \t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n \
-				   \t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n \
-				   \t}}\n \
-				   \tcout << "Avg Error in double precision -> " << err_qp_dp/N << endl ;\n \
-				   \tcout << "Avg Error in single precision -> " << err_dp_sp/N << endl ;\n \
-				   \tcout << "Max Error in double precision -> " << maxerrdp << endl ;\n \
-				   \tcout << "Max Error in single precision -> " << maxerrsp << endl ;\n\n \
-				   \tassert({maxabserr} >= maxerrdp);\n \
-				   \treturn 0;\n\n\n \
-				   }}'.format(maxabserr=maxError, empiricalanalysiscode=argList.empirical, cpp_dump_path_stem=cpp_dump_path.stem))
-
-	cpp_dump.close()
-
-	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem], cwd=cpp_dump_path.parent)
-	result=subprocess.run(["./"+cpp_dump_path.stem], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
-	print(result.stdout.decode("utf-8"))
 
 if __name__ == "__main__":
 	start_exec_time = time.time()
@@ -309,13 +226,13 @@ if __name__ == "__main__":
 	##--
 	maxError = [results[Globals.symTable[outVar]]["ERR"] * pow(2,-53) for outVar in Globals.outVars][0]
 	##--
-	print("\n\n----------- Empirical Error Analysis ----------")
+	emp_result = None
 	if argList.empirical!= 0:
 		assert(len(Globals.outVars)==1)
-		Empirical_analysis_generator(argList, maxError)
+		emp_result = helper.Empirical_analysis_generator(maxError).stdout.decode("utf-8")
 	ea2 = time.time()
 
-	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
+	helper.writeToFile(results, emp_result, fout, argList.file, argList.std, argList.sound)
 	#writeToFile(results)
 
 

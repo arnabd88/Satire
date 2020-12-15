@@ -4,6 +4,9 @@ import math
 import symengine as seng
 from collections import defaultdict
 
+import subprocess
+from pathlib import Path 
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -221,9 +224,96 @@ def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 		## Check back if filter is required on this
 
 		return [abs_depth, CandidateList]
+
+
+def Empirical_analysis_generator(maxError):
+
+	cpp_dump_path = Path(Globals.argList.file).with_suffix(".cpp")
+	cpp_dump = open(cpp_dump_path, 'w')
+	cpp_dump.write("#include <cstdio>\n"
+				   "#include <iostream>\n"
+				   "#include <unistd.h>\n"
+				   "#include <cstdlib>\n"
+				   "#include <cmath>\n"
+				   "#include <quadmath.h>\n"
+				   "#include <time.h>\n\n"
+				   "#include <cassert>\n\n"
+				   "using namespace std;\n\n")
+
+	for var, interval in dict.items(Globals.inputVars):
+		cpp_dump.write("#define _{}_low {}\n".format(str(var), str(interval['INTV'][0])))
+		cpp_dump.write("#define _{}_high {}\n".format(str(var), str(interval['INTV'][1])) )
+
+	cpp_dump.write("\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("double _{};\n".format(str(var)))
+
+	cpp_dump.write("\n\n")
+
+	cpp_dump.write("template<class T>\n"
+				   "void init() {\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("\t_{0} = _{0}_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_{0}_high-_{0}_low)));\n".format(str(var),))
+
+	cpp_dump.write("}\n\n"
+				   "template<class T>\n"
+				   "T execute_spec_precision()\n"
+				   "{\n")
+
+	for var in dict.keys(Globals.inputVars):
+		cpp_dump.write("\tT {0} = (T) _{0};\n".format(str(var)))
+	cpp_dump.write("\n")
+
+	for var, node in dict.items(Globals.symTable):
+		if var not in dict.keys(Globals.inputVars):
+			cpp_dump.write("\tT {} = {};\n".format(str(var), node.rec_build_expression(node, False)))
+
+	cpp_dump.write("\n\treturn {0};\n}}\n\n\n".format(str(Globals.outVars[0])))
+
+	cpp_dump.write('int main(int argc, char** argv)\n \
+				   {{\n\n \
+				   \tsrand(time(0));\n \
+				   \tFILE *fp ;\n \
+				   \t__float80 val_dp = 0;\n \
+				   \t__float80 val_sp = 0;\n \
+				   \t__float80 val_qp = 0;\n \
+				   \t__float80 err_dp_sp = 0;\n \
+				   \t__float80 err_qp_dp = 0;\n\n \
+				   \tint N = {empiricalanalysiscode} ;\n\n \
+				   \tfp = fopen("{cpp_dump_path_stem}_error_profile.csv", "w+");\n \
+				   \t__float80 maxerrdp = 0.0 ;\n \
+				   \t__float80 maxerrsp = 0.0 ;\n\n\n \
+				   \tfor (int i=0; i<N; i++) {{\n\n \
+				   \t\tinit<double>();\n \
+				   \t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n \
+				   \t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n \
+				   \t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n \
+				   \t\terr_dp_sp += fabs(val_dp - val_sp);\n \
+				   \t\terr_qp_dp += fabs(val_qp - val_dp);\n \
+				   \t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n \
+				   \t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n \
+				   \t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n \
+				   \t}}\n \
+				   \tcout << "Avg Error in double precision -> " << err_qp_dp/N << endl ;\n \
+				   \tcout << "Avg Error in single precision -> " << err_dp_sp/N << endl ;\n \
+				   \tcout << "Max Error in double precision -> " << maxerrdp << endl ;\n \
+				   \tcout << "Max Error in single precision -> " << maxerrsp << endl ;\n\n \
+				   \tassert({maxabserr} >= maxerrdp);\n \
+				   \treturn 0;\n\n\n \
+				   }}'.format(maxabserr=maxError, empiricalanalysiscode=Globals.argList.empirical, cpp_dump_path_stem=cpp_dump_path.stem))
+
+	cpp_dump.close()
+
+	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem], cwd=cpp_dump_path.parent)
+	result=subprocess.run(["./"+cpp_dump_path.stem], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
+	#print(result.stdout.decode("utf-8"))
+	return result
+
 		
 	
-def writeToFile(results, fout, inpfile, stdflag, sound):
+def writeToFile(results, emp_results, fout, inpfile, stdflag, sound):
 
 	fout.write("INPUT_FILE : "+inpfile+"\n")
 	dumpStr = ''
@@ -256,6 +346,10 @@ def writeToFile(results, fout, inpfile, stdflag, sound):
 		dumpStr += "REAL_INTERVAL : "+str(funcIntv)+"\n"
 		dumpStr += "FP_INTERVAL : "+str(outIntv)+"\n"
 		dumpStr += "//-------------------------------------\n"
+
+	if Globals.argList.empirical > 0:
+		dumpStr += "\n\n----------- Empirical Error Analysis ----------\n"
+		dumpStr += emp_results
 
 	fout.write(dumpStr+"\n")
 	if stdflag:

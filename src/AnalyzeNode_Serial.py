@@ -68,12 +68,12 @@ class AnalyzeNode_Serial(object):
 		outList = self.bwdDeriv[node].keys()
 		opList = [child.f_expression for child in node.children]
 		####
-		for out in outList:
-			print("Debug-deriv:", type(node).__name__)
-			print("Node expr:", node.f_expression)
-			print("Rounding:", node.get_rounding())
-			print("Deriv: ", self.bwdDeriv[node][out])
-			print("---------\n\n")
+		#for out in outList:
+		#	print("Debug-deriv:", type(node).__name__)
+		#	print("Node expr:", node.f_expression)
+		#	print("Rounding:", node.get_rounding())
+		#	print("Deriv: ", self.bwdDeriv[node][out])
+		#	print("---------\n\n")
 		####
 		if(len(node.children) > 0):
 			DerivFunc = ops._DFOPS[node.token.type]
@@ -226,8 +226,8 @@ class AnalyzeNode_Serial(object):
 						mappedList[local_hashbank[sig]].append(node)
 				self.trimList = mappedList.keys()
 
-			print(len(self.probeList), len(self.trimList))
-			logger.info("Primary cand list={l1}, Cmpressed cand list={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
+			print("Primary cand list count={l1}, Compressed cand list count={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
+			logger.info("Primary cand list count={l1}, Compressed cand list count={l2}".format(l1=len(self.probeList), l2=len(self.trimList)))
 			#print("const:", [(n.f_expression,id(n)) for n in Globals.depthTable[0]])
 			self.parent_dict = helper.expression_builder(self.trimList, build=False)
 
