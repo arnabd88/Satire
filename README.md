@@ -44,7 +44,6 @@ The "--help" command clarifies all the supporting arguments
 	//-------------------------------------
 	VAR : A_9_0
 	ABSOLUTE_ERROR : 1.2505552149377763e-12
-	First-order Error : 1.2505552149377763e-12
 	REAL_INTERVAL : [-1024, 1024.0]
 	FP_INTERVAL : [-1024.0000000000014, 1024.0000000000014]
 	//-------------------------------------
