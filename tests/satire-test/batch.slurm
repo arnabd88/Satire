@@ -63,7 +63,7 @@ for d in $FILES
 do
 	for trial in {1..20}
 	do
-	   python3 ../../../src/satern.py --file ${d} --std --sound --logfile ${d}_${trial}.log --outfile ${d}_${trial}.out
+	   python3 ../../../src/satire.py --file ${d} --std --sound --logfile ${d}_${trial}.log --outfile ${d}_${trial}.out
 	done
 done
 cd ..

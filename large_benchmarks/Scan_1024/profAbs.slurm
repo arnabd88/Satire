@@ -18,6 +18,6 @@ set -x
 for depth in {8..25}
 do
 	echo "$depth"
-	python3 ../../src/satern.py --std --file $fname --enable-abstraction --mindepth ${depth} --maxdepth ${depth} --logfile fix_${depth}.log --outfile fix_${depth}.txt
+	python3 ../../src/satire.py --std --file $fname --enable-abstraction --mindepth ${depth} --maxdepth ${depth} --logfile fix_${depth}.log --outfile fix_${depth}.txt
 done
 exit

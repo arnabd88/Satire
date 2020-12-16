@@ -12,7 +12,7 @@ source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_noError_K20_N20_E0.0.txt \
 		--logfile CG_Tref_noError_K20_N20_E0.0_abs-serial_10_20.pylog \
@@ -22,7 +22,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_noError_K20_N20_E0.0.txt \
 		--logfile CG_Tref_noError_K20_N20_E0.0_abs-serial_15_25.pylog \
@@ -32,7 +32,7 @@ python3 ../../src/satern.py \
 		--maxdepth 25
 
 # Abs window : (20,40)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_noError_K20_N20_E0.0.txt \
 		--logfile CG_Tref_noError_K20_N20_E0.0_abs-serial_20_40.pylog \
@@ -43,7 +43,7 @@ python3 ../../src/satern.py \
 
 ## Next One
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.1.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.1_abs-serial_10_20.pylog \
@@ -53,7 +53,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.1.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.1_abs-serial_15_25.pylog \
@@ -63,7 +63,7 @@ python3 ../../src/satern.py \
 		--maxdepth 25
 
 # Abs window : (20,40)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.1.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.1_abs-serial_20_40.pylog \
@@ -74,7 +74,7 @@ python3 ../../src/satern.py \
 
 # Enxt one
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.25.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.25_abs-serial_10_20.pylog \
@@ -84,7 +84,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.25.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.25_abs-serial_15_25.pylog \
@@ -94,7 +94,7 @@ python3 ../../src/satern.py \
 		--maxdepth 25
 
 # Abs window : (20,40)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--file CG_Tref_InError_K20_N20_E0.25.txt \
 		--logfile CG_Tref_InError_K20_N20_E0.25_abs-serial_20_40.pylog \

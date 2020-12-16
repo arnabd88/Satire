@@ -12,7 +12,7 @@ source /uufs/chpc.utah.edu/common/home/u1014840/local_python3.8
 
 
 # No-Abs window d$: (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file matmul_64_64_64.txt \
@@ -20,7 +20,7 @@ python3 ../../src/satern.py \
 		--outfile matmul_64_64_64_abs-serial_noAbs.out 
 
 # Abs window : (10,20)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file matmul_64_64_64.txt \
@@ -31,7 +31,7 @@ python3 ../../src/satern.py \
 		--maxdepth 20
 
 # Abs window : (15,25)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file matmul_64_64_64.txt \
@@ -42,7 +42,7 @@ python3 ../../src/satern.py \
 		--maxdepth 25
 
 # Abs window : (20,40)
-python3 ../../src/satern.py \
+python3 ../../src/satire.py \
         --std \
 		--compress \
 		--file matmul_64_64_64.txt \
