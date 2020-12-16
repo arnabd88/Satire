@@ -1,0 +1,10 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z t)
+ :name "Statistics.Distribution.Beta:$cdensity from math-functions-0.1.5.2"
+ :pre (and (<= -10 x 10)
+           (<= 0.5 y 0.9375)
+           (<= -10 z 10)
+           (<= -10 t 10))
+ (- (+ (* (- x 1.0) (log y)) (* (- z 1.0) (log (- 1.0 y)))) t))
+

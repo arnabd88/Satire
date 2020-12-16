@@ -1,0 +1,8 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y)
+ :name "Data.HyperLogLog.Type:size from hyperloglog-0.3.4, A"
+  :pre (and (<= 6 x 10)
+            (<= 1 y 5))
+  (* (* x 1.0) (log (- 1.0 (/ y x)))))
+

@@ -1,0 +1,14 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z t a b c i)
+ :name "Numeric.SpecFunctions:logBeta from math-functions-0.1.5.2, B"
+ :pre (and (<= -10 x 10)
+           (<= 1 y 10)
+           (<= -10 z 10)
+           (<= -10 t 10)
+           (<= -10 a 10)
+           (<= -10 b 10)
+           (<= 1 c 10)
+           (<= -10 i 10))
+ (+ (+ (+ (+ (+ (* x (log y)) z) t) a) (* (- b 0.5) (log c))) (* y i)))
+

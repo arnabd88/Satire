@@ -1,0 +1,15 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z)
+ :name "Numeric.SpecFunctions:$slogFactorial from math-functions-0.1.5.2, B"
+ :pre (and (<= 1 x 10)
+           (<= -10 y 10)
+           (<= -10 z 10))
+ (+
+  (+ (- (* (- x 0.5) (log x)) x) 0.91893853320467)
+  (/
+   (+
+    (* (- (* (+ y 0.0007936500793651) z) 0.0027777777777778) z)
+    0.083333333333333)
+   x)))
+

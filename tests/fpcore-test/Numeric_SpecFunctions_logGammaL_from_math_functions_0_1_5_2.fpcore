@@ -1,0 +1,11 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z t a)
+ :name "Numeric.SpecFunctions:logGammaL from math-functions-0.1.5.2"
+ :pre (and (<= 1 x 5)
+           (<= 1 y 5)
+           (<= 1 z 10)
+           (<= 1 t 10)
+           (<= -10 a 10))
+ (+ (- (+ (log (+ x y)) (log z)) t) (* (- a 0.5) (log t))))
+

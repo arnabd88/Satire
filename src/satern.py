@@ -14,13 +14,11 @@ from parser import Sparser
 from collections import defaultdict
 from AnalyzeNode_Serial import AnalyzeNode_Serial
 from ASTtypes import *
+from fpcore.fpcore_to_satern import fpcore_to_satern
 import helper 
 
 import logging
-import os
-import subprocess
 
-from pathlib import Path
 def parseArguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--file', help='Test file name', required=True)
@@ -43,18 +41,12 @@ def parseArguments():
 	#									default=0, type=int)
 	parser.add_argument('--simplify', help='Simplify expression -> could be costly for very large expressions',
 										default=False, action='store_true')
-	parser.add_argument('--empirical', help='Generates cpp code for empirical error analysis. Takes an'
-														'integer denoting the number of times the shadow value analysis'
-														'runs with different input values and outputs the max error'
-														'observed among those executions. Default is 0',
-						default=0, type=int)
 	parser.add_argument('--logfile', help='Python logging file name -> default is default.log', default='default.log')
 	parser.add_argument('--outfile', help='Name of the output file to write error info', default='outfile.txt')
 	parser.add_argument('--std', help='Print the result to stdout', default=False, action='store_true')
-	parser.add_argument('--sound', help='Turn on analysis for higher order errors(Disabled for now)', default=False, action='store_true')
+	parser.add_argument('--sound', help='Turn on analysis for higher order errors', default=False, action='store_true')
 	parser.add_argument('--compress', help='Perform signature matching to reduce optimizer calls using hashing and md5 signature', default=False, action='store_true')
-	#parser.add_argument('--force', help='Sideline additional tricks used for non-linear examples. Use this option for linear examples', default=False, action='store_true')
-	parser.add_argument('--gverbose', help='Create dumps of each optimizer query for debiugging', default=False, action='store_true') 
+	parser.add_argument('--force', help='Sideline additional tricks used for non-linear examples. Use this option for linear examples', default=False, action='store_true')
 	                                  
 
 	result = parser.parse_args()
@@ -189,6 +181,7 @@ def	ErrorAnalysis(argList):
 		return full_analysis(probeList, argList, maxdepth)
 	else:
 		return full_analysis(probeList, argList, maxdepth)
+	
 
 
 if __name__ == "__main__":
@@ -196,9 +189,10 @@ if __name__ == "__main__":
 	argList = parseArguments()
 	sys.setrecursionlimit(10**6)
 	print(argList)
-	assert(Globals.argList==None)
-	Globals.argList = argList
 	text = open(argList.file, 'r').read()
+	if "FPCore" in text:
+		text = fpcore_to_satern(text)
+		print(text)
 	fout = open(argList.outfile, 'w')
 	##-----------------------
 	logging.basicConfig(filename= argList.logfile,
@@ -223,16 +217,8 @@ if __name__ == "__main__":
 	
 	ea1 = time.time()
 	results = ErrorAnalysis(argList)
-	##--
-	maxError = [results[Globals.symTable[outVar]]["ERR"] * pow(2,-53) for outVar in Globals.outVars][0]
-	##--
-	emp_result = None
-	if argList.empirical!= 0:
-		assert(len(Globals.outVars)==1)
-		emp_result = helper.Empirical_analysis_generator(maxError).stdout.decode("utf-8")
 	ea2 = time.time()
-
-	helper.writeToFile(results, emp_result, fout, argList.file, argList.std, argList.sound)
+	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
 	#writeToFile(results)
 
 
