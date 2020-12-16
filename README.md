@@ -19,8 +19,8 @@ Satire requires the following softwares to be installed.
 		* [sly](https://github.com/dabeaz/sly) > 0.3
 		* [symengine](https://github.com/symengine/symengine) > 0.5.1
 		* [sympy](https://www.sympy.org/en/index.html) > 1.4
-		* [gelpia](https://github.com/soarlab/gelpia) (working commit ID: c28bf25593423f71ce6ef86122f2a8aa22bf0b33)
-			* After installation, make gelpia/bin available in $PATH
+	* [gelpia](https://github.com/soarlab/gelpia) (working commit ID: c28bf25593423f71ce6ef86122f2a8aa22bf0b33)
+		* After installation, make gelpia/bin available in $PATH
 
 
 ## Usage
