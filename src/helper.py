@@ -340,7 +340,7 @@ def writeToFile(results, emp_results, fout, inpfile, stdflag, sound):
 		dumpStr += "\n//-------------------------------------\n"
 		dumpStr += "VAR : "+ str(outVar) + "\n"
 		dumpStr += "ABSOLUTE_ERROR : "+str(abserror)+"\n"
-		dumpStr += "First-order Error : "+str(maxError)+"\n"
+		#dumpStr += "First-order Error : "+str(maxError)+"\n"
 		if sound:
 			dumpStr += "Higher-order Error : "+str(SecondmaxError)+"\n"
 		dumpStr += "REAL_INTERVAL : "+str(funcIntv)+"\n"
