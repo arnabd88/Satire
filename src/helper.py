@@ -229,17 +229,23 @@ def selectCandidateNodes(maxdepth, bound_mindepth, bound_maxdepth):
 def Empirical_analysis_generator(maxError):
 
 	cpp_dump_path = Path(Globals.argList.file).with_suffix(".cpp")
-	cpp_dump = open(cpp_dump_path, 'w')
+	cpp_dump = open(cpp_dump_path.name, 'w')
+
+	# Header files section.
 	cpp_dump.write("#include <cstdio>\n"
 				   "#include <iostream>\n"
 				   "#include <unistd.h>\n"
 				   "#include <cstdlib>\n"
 				   "#include <cmath>\n"
 				   "#include <quadmath.h>\n"
-				   "#include <time.h>\n\n"
-				   "#include <cassert>\n\n"
+				   "#include <time.h>\n"
+				   "#include <cassert>\n"
+				   "#include <sstream>\n"
+				   "#include <fstream>\n\n"
 				   "using namespace std;\n\n")
 
+	# Defining the bounds for the input variables.
+	cpp_dump.write("// Defining bounds for input variables. \n")
 	for var, interval in dict.items(Globals.inputVars):
 		cpp_dump.write("#define _{}_low {}\n".format(str(var), str(interval['INTV'][0])))
 		cpp_dump.write("#define _{}_high {}\n".format(str(var), str(interval['INTV'][1])) )
@@ -251,14 +257,19 @@ def Empirical_analysis_generator(maxError):
 
 	cpp_dump.write("\n\n")
 
+	# Initializing input variables with random values within given bounds.
+	cpp_dump.write("// Templated function to initialize the variables conforming to the appropriate precision\n")
 	cpp_dump.write("template<class T>\n"
 				   "void init() {\n")
 
 	for var in dict.keys(Globals.inputVars):
 		cpp_dump.write("\t_{0} = _{0}_low + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(_{0}_high-_{0}_low)));\n".format(str(var),))
 
-	cpp_dump.write("}\n\n"
-				   "template<class T>\n"
+	cpp_dump.write("}\n\n")
+
+	# Expression evaluation for calculating absolute error.
+	cpp_dump.write("// Templated function for executing expression at a particular precision \n")
+	cpp_dump.write("template<class T>\n"
 				   "T execute_spec_precision()\n"
 				   "{\n")
 
@@ -272,17 +283,29 @@ def Empirical_analysis_generator(maxError):
 
 	cpp_dump.write("\n\treturn {0};\n}}\n\n\n".format(str(Globals.outVars[0])))
 
+	# Templated function to print desired type of number to the needed precision value
+	cpp_dump.write("//Templated function to print desired type of number to the needed precision value\n")
+	cpp_dump.write("template < typename T >\n"
+				   "std::string to_string_with_precision(const T a_value, const int n = 6)\n"
+				   "{\n"
+				   "\tstd:: ostringstream out;\n"
+				   "\tout.precision(n);\n"
+				   "\tout << std::fixed << a_value;\n"
+				   "\treturn out.str();\n"
+				   "}\n\n")
+
+	# Main function section
 	cpp_dump.write('int main(int argc, char** argv)\n \
 				   {{\n\n \
 				   \tsrand(time(0));\n \
-				   \tFILE *fp ;\n \
+				   \tofstream fp ;\n \
 				   \t__float80 val_dp = 0;\n \
 				   \t__float80 val_sp = 0;\n \
 				   \t__float80 val_qp = 0;\n \
 				   \t__float80 err_dp_sp = 0;\n \
 				   \t__float80 err_qp_dp = 0;\n\n \
 				   \tint N = {empiricalanalysiscode} ;\n\n \
-				   \tfp = fopen("{cpp_dump_path_stem}_error_profile.csv", "w+");\n \
+				   \tfp.open("{cpp_dump_path_stem}_error_profile.csv",  ios::out);\n \
 				   \t__float80 maxerrdp = 0.0 ;\n \
 				   \t__float80 maxerrsp = 0.0 ;\n\n\n \
 				   \tfor (int i=0; i<N; i++) {{\n\n \
@@ -290,24 +313,30 @@ def Empirical_analysis_generator(maxError):
 				   \t\t__float80 val_sp = (__float80) execute_spec_precision<float>();\n \
 				   \t\t__float80 val_dp = (__float80) execute_spec_precision<double>();\n \
 				   \t\t__float80 val_qp   = (__float80) execute_spec_precision<__float128>();\n\n \
+				   \t\t// Shadow value error computation for single precision type with double precision being proxy for real number\n \
 				   \t\terr_dp_sp += fabs(val_dp - val_sp);\n \
+				   \t\t// Shadow value error computation for double precision type with quad precision being proxy for real number\n \
 				   \t\terr_qp_dp += fabs(val_qp - val_dp);\n \
 				   \t\tif( maxerrdp < fabs(val_qp - val_dp)) maxerrdp = fabs(val_qp - val_dp) ;\n \
 				   \t\tif( maxerrsp < fabs(val_dp - val_sp)) maxerrsp = fabs(val_dp - val_sp) ;\n \
-				   \t\tfprintf(fp, "%Lf, %Lf\\n",  fabs(val_dp - val_sp), fabs(val_qp - val_dp));\n\n \
+				   \t\tstring str = to_string_with_precision(fabs(val_dp - val_sp), 16) + "," + to_string_with_precision(fabs(val_qp - val_dp), 16) + "," + to_string_with_precision({maxabserr}/fabs(val_dp), 16) + "\\n";\n \
+				   \tfp << str;\n \
 				   \t}}\n \
 				   \tcout << "Avg Error in double precision -> " << err_qp_dp/N << endl ;\n \
 				   \tcout << "Avg Error in single precision -> " << err_dp_sp/N << endl ;\n \
 				   \tcout << "Max Error in double precision -> " << maxerrdp << endl ;\n \
 				   \tcout << "Max Error in single precision -> " << maxerrsp << endl ;\n\n \
-				   \tassert({maxabserr} >= maxerrdp);\n \
+				   \t// Ensuring Satire estimated error is greater than the actual error observed \n \
+				   \tassert({maxabserr} >= maxerrdp);\n\n \
+				   \t// Ensuring single precision error is greater than or equal to double precision error  \n \
+				   \tassert(maxerrsp >= maxerrdp);\n \
 				   \treturn 0;\n\n\n \
 				   }}'.format(maxabserr=maxError, empiricalanalysiscode=Globals.argList.empirical, cpp_dump_path_stem=cpp_dump_path.stem))
 
 	cpp_dump.close()
 
-	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem], cwd=cpp_dump_path.parent)
-	result=subprocess.run(["./"+cpp_dump_path.stem], stdout=subprocess.PIPE, cwd=cpp_dump_path.parent)
+	subprocess.run(["g++", cpp_dump_path.name, "-o", cpp_dump_path.stem])
+	result=subprocess.run(["./"+cpp_dump_path.stem], stdout=subprocess.PIPE)
 	#print(result.stdout.decode("utf-8"))
 	return result
 
@@ -340,7 +369,7 @@ def writeToFile(results, emp_results, fout, inpfile, stdflag, sound):
 		dumpStr += "\n//-------------------------------------\n"
 		dumpStr += "VAR : "+ str(outVar) + "\n"
 		dumpStr += "ABSOLUTE_ERROR : "+str(abserror)+"\n"
-		dumpStr += "First-order Error : "+str(maxError)+"\n"
+		#dumpStr += "First-order Error : "+str(maxError)+"\n"
 		if sound:
 			dumpStr += "Higher-order Error : "+str(SecondmaxError)+"\n"
 		dumpStr += "REAL_INTERVAL : "+str(funcIntv)+"\n"

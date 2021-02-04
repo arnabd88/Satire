@@ -15,20 +15,22 @@ Satire requires the following softwares to be installed.
 
 * Requirements:
 	* python > 3.6
-	* [sly](https://github.com/dabeaz/sly) > 0.3
-	* [symengine](https://github.com/symengine/symengine) > 0.5.1
-	* [sympy](https://www.sympy.org/en/index.html) > 1.4
+	* python packages using pip3
+		* [sly](https://github.com/dabeaz/sly) > 0.3
+		* [symengine](https://github.com/symengine/symengine) > 0.5.1
+		* [sympy](https://www.sympy.org/en/index.html) > 1.4
+		* [bigfloat](https://pypi.org/project/bigfloat) > 0.4.0
 	* [gelpia](https://github.com/soarlab/gelpia) (working commit ID: c28bf25593423f71ce6ef86122f2a8aa22bf0b33)
 		* After installation, make gelpia/bin available in $PATH
 
 
 ## Usage
 
-Satire is a python based framework. The main function is available is "src/satern.py"
+Satire is a python based framework. The main function is available is "src/satire.py"
 The "--help" command clarifies all the supporting arguments
 
 #### Example1 (with default options: serialized, no abstraction, no empirical analysis)
-  > python3 src/satern.py --std --file large_benchmarks/reduction/Reduction_1024.txt
+  > python3 src/satire.py --std --file large_benchmarks/reduction/Reduction_1024.txt
 
  The execution generates a `default.log` containing logging traces of the execution for debugging. This file name can be modified using the `--logfile <filename1>` option.
  
@@ -42,7 +44,6 @@ The "--help" command clarifies all the supporting arguments
 	//-------------------------------------
 	VAR : A_9_0
 	ABSOLUTE_ERROR : 1.2505552149377763e-12
-	First-order Error : 1.2505552149377763e-12
 	REAL_INTERVAL : [-1024, 1024.0]
 	FP_INTERVAL : [-1024.0000000000014, 1024.0000000000014]
 	//-------------------------------------
@@ -88,4 +89,4 @@ The `--empirical` flag generates a C++ code for the benchmark performing shadow 
  Full execution of the `runScript` will take few hours. Selectively, benchmarks can be commented out from `runScipt` as required.
 
 #### Quick tests
- Smaller tests for both `FPtaylor` and Satire are available inside the test directory. For trying out FPtaylor tests you need to install [FPtaylor](https://github.com/soarlab/FPTaylor). Satire compatible tests are available in `tests/satern-tests/`.
+ Smaller tests for both `FPtaylor` and Satire are available inside the test directory. For trying out FPtaylor tests you need to install [FPtaylor](https://github.com/soarlab/FPTaylor). Satire compatible tests are available in `tests/satire-tests/`.

@@ -217,8 +217,17 @@ if __name__ == "__main__":
 	
 	ea1 = time.time()
 	results = ErrorAnalysis(argList)
+	##--
+	maxError = [results[Globals.symTable[outVar]]["ERR"] * pow(2,-53) for outVar in Globals.outVars][0]
+	##--
+	emp_result = None
 	ea2 = time.time()
-	helper.writeToFile(results, fout, argList.file, argList.std, argList.sound)
+	if argList.empirical!= 0:
+		assert(len(Globals.outVars)==1)
+		emp_result = helper.Empirical_analysis_generator(maxError).stdout.decode("utf-8")
+
+
+	helper.writeToFile(results, emp_result, fout, argList.file, argList.std, argList.sound)
 	#writeToFile(results)
 
 
