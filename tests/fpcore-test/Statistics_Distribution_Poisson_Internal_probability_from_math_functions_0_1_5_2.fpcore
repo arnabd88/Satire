@@ -1,0 +1,9 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z)
+ :name "Statistics.Distribution.Poisson.Internal:probability from math-functions-0.1.5.2"
+ :pre (and (<= 0 x 4)
+           (<= 1 y 5)
+           (<= 0 z 10))
+ (exp (+ (- x z) (* (log y) y))))
+

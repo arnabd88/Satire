@@ -1,0 +1,7 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x)
+ :name "Statistics.Distribution.Binomial:directEntropy from math-functions-0.1.5.2"
+ :pre (<= 1 x 10)
+ (* x (log x)))
+

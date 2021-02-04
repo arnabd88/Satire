@@ -1,0 +1,8 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y)
+ :name "Data.Random.Distribution.Normal:normalF from random-fu-0.2.6.2"
+ :pre (and (<= -5 x 1)
+           (<= -5 y 5))
+ (exp (* (* x y) y)))
+

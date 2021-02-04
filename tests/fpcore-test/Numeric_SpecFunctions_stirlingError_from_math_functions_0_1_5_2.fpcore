@@ -1,0 +1,9 @@
+; -*- mode: scheme -*-
+
+(FPCore  (x y z)
+ :name "Numeric.SpecFunctions:stirlingError from math-functions-0.1.5.2"
+ :pre (and (<= -10 x 10)
+           (<= 1 y 10)
+           (<= -10 z 10))
+ (- (+ (- x (* (+ y 0.5) (log y))) y) z))
+
