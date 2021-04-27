@@ -6,8 +6,9 @@ Satire is a first order error analysis tool for obtaining rigorous bounds on
 worst case floating point round-off errors. It works on straight line floating-point programs.
 Satire, sheds light on how scalability and bound-tightness can be attained through
 a combination of incremental analysis,  abstraction, and judicious use of concrete 
-and symbolic evaluation. 
+and symbolic evaluation.
 
+Please try out the [web interface](http://formal.cs.utah.edu:8080/satire/).
 
 # Dependencies
 
